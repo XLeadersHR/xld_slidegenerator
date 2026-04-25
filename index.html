@@ -1,0 +1,2721 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XLeader Academy | Slide Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs/dist/pptxgen.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --red:#C22620;
+  --gold:#D4AF37;
+  --navy:#1B2A4A;
+  --ink:#1A1A1A;
+  --gray:#4A4A4A;
+  --white:#FFFFFF;
+  --bg:#F4F4F4;
+  --panel:#FFFFFF;
+  --line:#E5E5E5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none}
+input,select,textarea{font-family:inherit}
+
+.top-bar{
+  background:var(--red);color:var(--gold);
+  height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;font-family:'Oswald',sans-serif;font-weight:600;
+  letter-spacing:1px;flex-shrink:0;
+}
+.top-bar h1{font-size:17px;text-transform:uppercase}
+.top-bar .actions{display:flex;gap:6px}
+.top-bar .actions button{
+  background:var(--gold);color:var(--red);
+  padding:7px 12px;font-weight:600;font-size:11px;
+  text-transform:uppercase;letter-spacing:.5px;border-radius:3px;
+  transition:all .15s;font-family:'Inter',sans-serif;
+}
+.top-bar .actions button:hover{background:var(--white);color:var(--red)}
+
+.help-bar{
+  background:var(--ink);color:#eee;
+  font-family:'Inter',sans-serif;font-size:12px;
+  padding:8px 20px;display:flex;align-items:center;gap:8px;
+  flex-shrink:0;letter-spacing:.3px;
+}
+.help-bar .step{padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.08)}
+.help-bar .arrow{color:var(--gold);font-weight:700}
+.help-bar .strong{color:var(--gold);font-weight:600;margin-right:10px;text-transform:uppercase;font-size:11px}
+
+.app{
+  display:grid;
+  grid-template-columns:380px 1fr 220px;
+  height:calc(100vh - 52px - 36px - 36px);
+}
+.left-panel,.right-panel{
+  background:var(--panel);
+  overflow-y:auto;border-right:1px solid var(--line);
+}
+.right-panel{border-right:none;border-left:1px solid var(--line)}
+.center-panel{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px;background:#F9F9F9;overflow:hidden;
+}
+
+.accordion-item{border-bottom:1px solid var(--line)}
+.accordion-header{
+  padding:12px 16px;font-family:'Oswald',sans-serif;
+  font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--ink);display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;user-select:none;background:#FAFAFA;
+}
+.accordion-header:hover{background:#F0F0F0}
+.accordion-header::after{content:'+';font-size:18px;color:var(--red);font-weight:700}
+.accordion-item.open .accordion-header::after{content:'−'}
+.accordion-body{padding:12px 16px;display:none;font-size:13px}
+.accordion-item.open .accordion-body{display:block}
+
+.field{margin-bottom:10px}
+.field label{
+  display:flex;align-items:center;gap:4px;margin-bottom:4px;
+  font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:#666;
+}
+.field label .val{margin-left:auto;color:#888;text-transform:none;font-weight:400}
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="number"],
+.field select,
+.field textarea{
+  width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:3px;
+  font-size:13px;color:var(--ink);background:#fff;
+}
+.field textarea{min-height:70px;resize:vertical;font-family:'Inter',sans-serif}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red)}
+.field input[type="file"]{font-size:12px;width:100%}
+.field.featured{
+  padding:10px;background:#FDF4F4;border:2px solid var(--red);border-radius:4px;margin-bottom:14px;
+}
+.field.featured label{color:var(--red);font-weight:700}
+.field.featured input{border:1px solid var(--red);font-size:14px;font-weight:600;font-family:'Oswald',sans-serif}
+.tip{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;border-radius:50%;
+  background:#bbb;color:#fff;font-size:9px;cursor:help;font-weight:700;
+}
+.tip:hover{background:var(--red)}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.btn{
+  padding:7px 12px;border-radius:3px;font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.5px;
+  background:var(--red);color:var(--white);transition:all .15s;
+  font-family:'Inter',sans-serif;
+}
+.btn:hover{background:var(--gold);color:var(--red)}
+.btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn.ghost:hover{background:var(--red);color:var(--white)}
+.btn.mini{padding:5px 8px;font-size:10px}
+.btn.danger{background:#888}
+.btn.danger:hover{background:var(--red);color:var(--white)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap}
+
+.template-picker{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.template-card{
+  border:2px solid var(--line);border-radius:4px;padding:6px;cursor:pointer;
+  font-size:10px;text-align:center;font-weight:600;
+  transition:all .15s;line-height:1.2;
+}
+.template-card:hover{border-color:var(--red)}
+.template-card.active{border-color:var(--red);background:#FDF4F4}
+.template-card .swatch{
+  height:26px;border-radius:3px;margin-bottom:4px;
+  display:flex;overflow:hidden;border:1px solid #eee;
+}
+.template-card .swatch span{flex:1;display:block}
+
+.slide-list-item{
+  border:1px solid var(--line);border-radius:4px;
+  padding:10px;margin-bottom:8px;background:#fafafa;
+}
+.slide-list-item h4{
+  font-family:'Oswald',sans-serif;font-size:12px;margin-bottom:6px;
+  display:flex;justify-content:space-between;align-items:center;
+  text-transform:uppercase;
+}
+.slide-list-item h4 .mini-actions{display:flex;gap:4px}
+
+.img-entry{
+  border:1px solid var(--line);border-radius:4px;
+  padding:8px;margin-bottom:8px;background:#fff;font-size:11px;
+}
+.img-entry img.thumb-img{width:50px;height:50px;object-fit:cover;border-radius:4px;margin-bottom:6px}
+.speaker-entry{
+  display:grid;grid-template-columns:1fr auto;gap:6px;
+  margin-bottom:6px;align-items:center;
+}
+.speaker-entry input{padding:6px 8px!important;font-size:12px!important}
+
+.preview-wrapper{
+  position:relative;width:100%;max-width:100%;aspect-ratio:16/9;
+  background:#000;box-shadow:0 8px 24px rgba(0,0,0,.2);overflow:hidden;
+}
+.preview-nav{
+  display:flex;gap:12px;align-items:center;margin-top:12px;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:500;
+}
+.preview-nav button{
+  background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;
+  font-size:14px;font-weight:700;
+}
+.preview-nav button:hover{background:var(--gold);color:var(--red)}
+.preview-nav button:disabled{background:#ccc;cursor:not-allowed}
+
+.thumb-header{
+  padding:10px 12px;font-family:'Oswald',sans-serif;
+  font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+  border-bottom:1px solid var(--line);color:var(--ink);background:#FAFAFA;
+}
+.thumb-list{padding:10px}
+.thumb{
+  position:relative;aspect-ratio:16/9;
+  border:2px solid var(--line);border-radius:3px;
+  margin-bottom:8px;overflow:hidden;cursor:pointer;transition:all .15s;
+  background:#000;
+}
+.thumb:hover{border-color:var(--gold)}
+.thumb.active{border-color:var(--red)}
+.thumb .num{
+  position:absolute;top:2px;left:4px;z-index:5;
+  color:var(--white);font-size:9px;font-weight:700;
+  background:var(--red);padding:1px 4px;border-radius:2px;
+}
+.thumb .thumb-inner{position:absolute;inset:0;transform-origin:top left}
+
+.bottom-bar{
+  background:var(--red);color:var(--gold);
+  height:36px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;
+  letter-spacing:.5px;flex-shrink:0;
+}
+
+.toast{
+  position:fixed;top:66px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:4px;
+  font-size:13px;z-index:2000;opacity:0;pointer-events:none;
+  transition:opacity .25s;font-family:'Inter',sans-serif;
+}
+.toast.show{opacity:1}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#999}
+
+/* ============ SLIDE RENDERING ============ */
+/* Base slide: 960x540 CSS px = 13.33" x 7.5" at 72dpi */
+.slide{
+  position:relative;width:960px;height:540px;
+  transform-origin:top left;font-family:'Inter',sans-serif;
+  overflow:hidden;
+}
+.slide *{box-sizing:border-box}
+.slide .slide-footer{
+  position:absolute;left:0;right:0;bottom:0;
+  height:21.6px; /* 0.3 inch at 72pt/inch */
+  background:var(--red);color:#fff;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:400;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;z-index:200;letter-spacing:.3px;
+}
+.slide .logo-on-slide{
+  position:absolute;z-index:180;object-fit:contain;
+  top:21.6px; /* 0.3 inch from top */
+}
+.slide .content-zone{
+  position:absolute;left:0;right:0;
+  top:43.2px; /* 0.3 inch margin + 0.3 inch title offset buffer */
+  bottom:21.6px;
+}
+.slide .content-zone.has-logo{top:88px}
+.slide .content-zone.cover, .slide .content-zone.section, .slide .content-zone.thankyou{top:21.6px;bottom:21.6px}
+.slide .content-zone.cover.has-logo, .slide .content-zone.section.has-logo, .slide .content-zone.thankyou.has-logo{top:88px}
+
+/* Padding applied via inline style */
+
+/* H1/H2/H3 common */
+.slide h1, .slide h2, .slide h3{font-family:'Oswald',sans-serif;font-weight:700;line-height:1.08;text-transform:uppercase}
+.slide h2{font-weight:600}
+.slide h3{font-weight:600}
+.slide p, .slide ul, .slide li, .slide .txt{font-family:'Inter',sans-serif;line-height:1.5}
+
+/* Bullet styling */
+.slide ul{list-style:none;padding:0}
+.slide ul li{position:relative;padding-left:18px;margin-bottom:8px}
+.slide ul li::before{
+  content:'';position:absolute;left:0;top:.6em;width:7px;height:7px;border-radius:50%;
+  background:var(--red);
+}
+
+/* Accent line */
+.slide .accent{display:block;background:var(--red)}
+
+/* Content title underline */
+.slide .title-underline{height:4px;width:80px;margin-top:4px;background:var(--gold)}
+
+/* ============ TEMPLATE: EXECUTIVE ============ */
+.slide[data-tpl="executive"][data-layout="cover"]{background:var(--red)}
+.slide[data-tpl="executive"][data-layout="cover"] h1{color:#fff}
+.slide[data-tpl="executive"][data-layout="cover"] .sub{color:var(--gold)}
+.slide[data-tpl="executive"][data-layout="cover"] .meta{color:#fff}
+.slide[data-tpl="executive"][data-layout="cover"] .accent{background:var(--gold)}
+.slide[data-tpl="executive"][data-layout="section"]{background:var(--red)}
+.slide[data-tpl="executive"][data-layout="section"] .sec-num{color:var(--gold)}
+.slide[data-tpl="executive"][data-layout="section"] h1{color:#fff}
+.slide[data-tpl="executive"][data-layout="section"] .accent{background:var(--gold)}
+.slide[data-tpl="executive"][data-layout="content1"],
+.slide[data-tpl="executive"][data-layout="content2"],
+.slide[data-tpl="executive"][data-layout="contentImage"]{background:#fff}
+.slide[data-tpl="executive"] h2, .slide[data-tpl="executive"] .cnt-title{color:var(--red)}
+.slide[data-tpl="executive"] h3, .slide[data-tpl="executive"] .col-title{color:var(--red)}
+.slide[data-tpl="executive"] .txt, .slide[data-tpl="executive"] ul li{color:var(--ink)}
+.slide[data-tpl="executive"] .title-underline{background:var(--gold)}
+.slide[data-tpl="executive"][data-layout="thankyou"]{background:var(--red)}
+.slide[data-tpl="executive"][data-layout="thankyou"] .ty-title{color:#fff}
+.slide[data-tpl="executive"][data-layout="thankyou"] .ty-body{color:var(--gold)}
+.slide[data-tpl="executive"][data-layout="thankyou"] .accent{background:var(--gold)}
+
+/* ============ TEMPLATE: MINIMAL ============ */
+.slide[data-tpl="minimal"]{background:#fff}
+.slide[data-tpl="minimal"] .left-red{position:absolute;left:0;top:0;bottom:21.6px;width:14px;background:var(--red);z-index:50}
+.slide[data-tpl="minimal"][data-layout="cover"] h1{color:var(--ink)}
+.slide[data-tpl="minimal"][data-layout="cover"] .sub{color:var(--red)}
+.slide[data-tpl="minimal"][data-layout="cover"] .meta{color:var(--ink)}
+.slide[data-tpl="minimal"][data-layout="cover"] .accent{background:var(--red)}
+.slide[data-tpl="minimal"][data-layout="section"] .sec-num{color:var(--red)}
+.slide[data-tpl="minimal"][data-layout="section"] h1{color:var(--ink)}
+.slide[data-tpl="minimal"][data-layout="section"] .accent{background:var(--red)}
+.slide[data-tpl="minimal"] h2, .slide[data-tpl="minimal"] .cnt-title{color:var(--red)}
+.slide[data-tpl="minimal"] h3, .slide[data-tpl="minimal"] .col-title{color:var(--red)}
+.slide[data-tpl="minimal"] .txt, .slide[data-tpl="minimal"] ul li{color:var(--ink)}
+.slide[data-tpl="minimal"] .title-underline{background:var(--gold)}
+.slide[data-tpl="minimal"][data-layout="thankyou"] .ty-title{color:var(--red)}
+.slide[data-tpl="minimal"][data-layout="thankyou"] .ty-body{color:var(--ink)}
+.slide[data-tpl="minimal"][data-layout="thankyou"] .accent{background:var(--red)}
+
+/* ============ TEMPLATE: DARK ============ */
+.slide[data-tpl="dark"]{background:var(--navy)}
+.slide[data-tpl="dark"][data-layout="cover"] h1{color:var(--gold)}
+.slide[data-tpl="dark"][data-layout="cover"] .sub{color:#fff}
+.slide[data-tpl="dark"][data-layout="cover"] .meta{color:#fff}
+.slide[data-tpl="dark"][data-layout="cover"] .accent{background:var(--red)}
+.slide[data-tpl="dark"][data-layout="section"] .sec-num{color:var(--red)}
+.slide[data-tpl="dark"][data-layout="section"] h1{color:var(--gold)}
+.slide[data-tpl="dark"][data-layout="section"] .accent{background:var(--red)}
+.slide[data-tpl="dark"] h2, .slide[data-tpl="dark"] .cnt-title{color:var(--gold)}
+.slide[data-tpl="dark"] h3, .slide[data-tpl="dark"] .col-title{color:var(--gold)}
+.slide[data-tpl="dark"] .txt, .slide[data-tpl="dark"] ul li{color:#fff}
+.slide[data-tpl="dark"] ul li::before{background:var(--gold)}
+.slide[data-tpl="dark"] .title-underline{background:var(--red)}
+.slide[data-tpl="dark"][data-layout="thankyou"] .ty-title{color:var(--gold)}
+.slide[data-tpl="dark"][data-layout="thankyou"] .ty-body{color:#fff}
+.slide[data-tpl="dark"][data-layout="thankyou"] .accent{background:var(--red)}
+
+/* ============ TEMPLATE: RED BLACK ============ */
+.slide[data-tpl="redBlack"]{background:var(--ink)}
+.slide[data-tpl="redBlack"][data-layout="cover"]{background:var(--ink)}
+.slide[data-tpl="redBlack"][data-layout="cover"] h1{color:#fff}
+.slide[data-tpl="redBlack"][data-layout="cover"] .sub{color:var(--gold)}
+.slide[data-tpl="redBlack"][data-layout="cover"] .meta{color:#fff}
+.slide[data-tpl="redBlack"][data-layout="cover"] .accent{background:var(--red)}
+.slide[data-tpl="redBlack"][data-layout="section"] .sec-num{color:var(--red)}
+.slide[data-tpl="redBlack"][data-layout="section"] h1{color:#fff}
+.slide[data-tpl="redBlack"][data-layout="section"] .accent{background:var(--red)}
+.slide[data-tpl="redBlack"] h2, .slide[data-tpl="redBlack"] .cnt-title{color:var(--red)}
+.slide[data-tpl="redBlack"] h3, .slide[data-tpl="redBlack"] .col-title{color:var(--gold)}
+.slide[data-tpl="redBlack"] .txt, .slide[data-tpl="redBlack"] ul li{color:#fff}
+.slide[data-tpl="redBlack"] ul li::before{background:var(--red)}
+.slide[data-tpl="redBlack"] .title-underline{background:var(--red)}
+.slide[data-tpl="redBlack"][data-layout="thankyou"] .ty-title{color:var(--gold)}
+.slide[data-tpl="redBlack"][data-layout="thankyou"] .ty-body{color:#fff}
+.slide[data-tpl="redBlack"][data-layout="thankyou"] .accent{background:var(--red)}
+
+/* ============ TEMPLATE: RED GRAY ============ */
+.slide[data-tpl="redGray"]{background:var(--gray)}
+.slide[data-tpl="redGray"][data-layout="cover"] .left-red{position:absolute;left:0;top:0;bottom:21.6px;width:22px;background:var(--red);z-index:50}
+.slide[data-tpl="redGray"][data-layout="cover"] h1{color:#fff}
+.slide[data-tpl="redGray"][data-layout="cover"] .sub{color:var(--gold)}
+.slide[data-tpl="redGray"][data-layout="cover"] .meta{color:#fff}
+.slide[data-tpl="redGray"][data-layout="cover"] .accent{background:var(--red)}
+.slide[data-tpl="redGray"][data-layout="section"] .sec-num{color:var(--red)}
+.slide[data-tpl="redGray"][data-layout="section"] h1{color:var(--gold)}
+.slide[data-tpl="redGray"][data-layout="section"] .accent{background:var(--red)}
+.slide[data-tpl="redGray"] h2, .slide[data-tpl="redGray"] .cnt-title{color:var(--gold)}
+.slide[data-tpl="redGray"] h3, .slide[data-tpl="redGray"] .col-title{color:var(--gold)}
+.slide[data-tpl="redGray"] .txt, .slide[data-tpl="redGray"] ul li{color:#fff}
+.slide[data-tpl="redGray"] ul li::before{background:var(--red)}
+.slide[data-tpl="redGray"] .title-underline{background:var(--red)}
+.slide[data-tpl="redGray"][data-layout="thankyou"] .ty-title{color:var(--gold)}
+.slide[data-tpl="redGray"][data-layout="thankyou"] .ty-body{color:#fff}
+.slide[data-tpl="redGray"][data-layout="thankyou"] .accent{background:var(--red)}
+
+/* ============ TEMPLATE: CORPORATE ============ */
+.slide[data-tpl="corporate"]{background:#fff}
+.slide[data-tpl="corporate"] .frame{
+  position:absolute;inset:14px 14px 36px 14px;border:4px solid var(--red);z-index:1;
+  pointer-events:none;
+}
+.slide[data-tpl="corporate"][data-layout="cover"] h1{color:var(--red);text-align:center!important}
+.slide[data-tpl="corporate"][data-layout="cover"] .sub{color:var(--ink);text-align:center!important}
+.slide[data-tpl="corporate"][data-layout="cover"] .meta{color:var(--ink);text-align:center!important}
+.slide[data-tpl="corporate"][data-layout="cover"] .accent{background:var(--red);margin-left:auto;margin-right:auto}
+.slide[data-tpl="corporate"][data-layout="cover"] .cover-body{align-items:center!important;justify-content:center!important;text-align:center}
+.slide[data-tpl="corporate"][data-layout="section"] .sec-num{color:var(--red)}
+.slide[data-tpl="corporate"][data-layout="section"] h1{color:var(--ink)}
+.slide[data-tpl="corporate"][data-layout="section"] .accent{background:var(--red)}
+.slide[data-tpl="corporate"] h2, .slide[data-tpl="corporate"] .cnt-title{color:var(--red)}
+.slide[data-tpl="corporate"] h3, .slide[data-tpl="corporate"] .col-title{color:var(--red)}
+.slide[data-tpl="corporate"] .txt, .slide[data-tpl="corporate"] ul li{color:var(--ink)}
+.slide[data-tpl="corporate"] .title-underline{background:var(--gold)}
+.slide[data-tpl="corporate"][data-layout="thankyou"] .ty-title{color:var(--red);text-align:center!important}
+.slide[data-tpl="corporate"][data-layout="thankyou"] .ty-body{color:var(--ink);text-align:center!important}
+.slide[data-tpl="corporate"][data-layout="thankyou"] .ty-body-wrap{align-items:center;text-align:center}
+.slide[data-tpl="corporate"][data-layout="thankyou"] .accent{background:var(--red);margin-left:auto;margin-right:auto}
+
+/* ============ TEMPLATE: PREMIUM GOLD ============ */
+.slide[data-tpl="premiumGold"]{background:var(--red)}
+.slide[data-tpl="premiumGold"][data-layout="cover"] h1{color:var(--gold)}
+.slide[data-tpl="premiumGold"][data-layout="cover"] .sub{color:#fff}
+.slide[data-tpl="premiumGold"][data-layout="cover"] .meta{color:var(--gold)}
+.slide[data-tpl="premiumGold"][data-layout="cover"] .accent{background:var(--gold);height:5px!important}
+.slide[data-tpl="premiumGold"][data-layout="section"] .sec-num{color:var(--gold)}
+.slide[data-tpl="premiumGold"][data-layout="section"] h1{color:#fff}
+.slide[data-tpl="premiumGold"][data-layout="section"] .accent{background:var(--gold)}
+.slide[data-tpl="premiumGold"] h2, .slide[data-tpl="premiumGold"] .cnt-title{color:var(--gold)}
+.slide[data-tpl="premiumGold"] h3, .slide[data-tpl="premiumGold"] .col-title{color:var(--gold)}
+.slide[data-tpl="premiumGold"] .txt, .slide[data-tpl="premiumGold"] ul li{color:#fff}
+.slide[data-tpl="premiumGold"] ul li::before{background:var(--gold)}
+.slide[data-tpl="premiumGold"] .title-underline{background:var(--gold)}
+.slide[data-tpl="premiumGold"][data-layout="thankyou"] .ty-title{color:var(--gold)}
+.slide[data-tpl="premiumGold"][data-layout="thankyou"] .ty-body{color:#fff}
+.slide[data-tpl="premiumGold"][data-layout="thankyou"] .accent{background:var(--gold)}
+
+/* ============ TEMPLATE: SPLIT RED ============ */
+.slide[data-tpl="splitRed"]{background:#fff}
+.slide[data-tpl="splitRed"] .split-red{
+  position:absolute;left:0;top:0;bottom:21.6px;width:40%;background:var(--red);z-index:1;
+}
+.slide[data-tpl="splitRed"] .split-left{
+  position:absolute;left:0;top:0;bottom:21.6px;width:40%;z-index:10;
+  display:flex;flex-direction:column;justify-content:center;padding:50px;color:#fff;
+}
+.slide[data-tpl="splitRed"] .split-right{
+  position:absolute;right:0;top:0;bottom:21.6px;width:60%;z-index:10;
+  display:flex;flex-direction:column;justify-content:center;padding:50px;
+}
+.slide[data-tpl="splitRed"] .split-left h1, .slide[data-tpl="splitRed"] .split-left h2,
+.slide[data-tpl="splitRed"] .split-left .sec-num{color:var(--gold)}
+.slide[data-tpl="splitRed"] .split-left .txt, .slide[data-tpl="splitRed"] .split-left .speaker-list li,
+.slide[data-tpl="splitRed"] .split-left .meta{color:#fff}
+.slide[data-tpl="splitRed"] .split-right h1, .slide[data-tpl="splitRed"] .split-right h2, .slide[data-tpl="splitRed"] .split-right .cnt-title{color:var(--red)}
+.slide[data-tpl="splitRed"] .split-right h3, .slide[data-tpl="splitRed"] .split-right .col-title{color:var(--red)}
+.slide[data-tpl="splitRed"] .split-right .txt, .slide[data-tpl="splitRed"] .split-right ul li{color:var(--ink)}
+.slide[data-tpl="splitRed"] .accent{background:var(--gold)}
+.slide[data-tpl="splitRed"] .title-underline{background:var(--gold)}
+
+/* ============ LAYOUT-SPECIFIC ============ */
+.slide .cover-body{
+  position:relative;height:100%;display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;
+}
+.slide h1{line-height:1.05}
+.slide .sub{font-family:'Oswald',sans-serif;font-weight:700;line-height:1.15}
+.slide .meta{font-family:'Inter',sans-serif;line-height:1.4}
+.slide .accent{width:100px;height:4px;margin:14px 0}
+.slide .speaker-list{list-style:none;padding:0;font-family:'Inter',sans-serif;margin-top:6px}
+.slide .speaker-list li{padding-left:0;margin-bottom:2px;position:static;font-weight:500}
+.slide .speaker-list li::before{display:none}
+
+.slide .section-body{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center}
+.slide .sec-num{font-family:'Oswald',sans-serif;font-weight:700;line-height:.9;margin-bottom:10px;opacity:.95}
+.slide .section-body h1{font-family:'Oswald',sans-serif;max-width:90%}
+
+.slide .content-inner{position:relative;height:100%;display:flex;flex-direction:column}
+.slide .cnt-title{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;line-height:1.08}
+.slide .two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px;flex:1;align-content:start;margin-top:14px}
+.slide .col-title{font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;margin-bottom:6px}
+.slide .content-with-image{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;flex:1;margin-top:14px}
+.slide .image-slot{position:relative;overflow:hidden;border-radius:8px;background:#eee}
+.slide .image-slot img{width:100%;height:100%;display:block}
+
+.slide .free-image{position:absolute;overflow:hidden;border-radius:6px;background:#eee;z-index:30}
+.slide .free-image img{width:100%;height:100%;display:block}
+
+.slide .ty-body-wrap{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center}
+.slide .ty-title{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;line-height:1.05;margin-bottom:14px}
+.slide .ty-body{font-family:'Inter',sans-serif;line-height:1.5}
+
+@media (max-width:1280px){.app{grid-template-columns:340px 1fr 200px}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>XLeader Academy | Slide Generator</h1>
+  <div class="actions">
+    <button id="btnUndo" title="Hoàn tác (Ctrl+Z)">Undo</button>
+    <button id="btnRedo" title="Làm lại (Ctrl+Y)">Redo</button>
+    <button id="btnSavePreset" title="Lưu cấu hình hiện tại vào trình duyệt">Lưu preset</button>
+    <button id="btnLoadPreset" title="Nạp cấu hình đã lưu">Load preset</button>
+    <button id="btnReset" title="Reset về mặc định">Reset</button>
+    <button id="btnExport" title="Xuất file PPTX (Ctrl+S)">Xuất PPTX</button>
+  </div>
+</div>
+
+<div class="help-bar">
+  <span class="strong">Hướng dẫn</span>
+  <span class="step">1. Chọn template</span><span class="arrow">→</span>
+  <span class="step">2. Nhập thông tin</span><span class="arrow">→</span>
+  <span class="step">3. Thêm slide</span><span class="arrow">→</span>
+  <span class="step">4. Tùy chỉnh</span><span class="arrow">→</span>
+  <span class="step">5. Xuất PPTX</span>
+</div>
+
+<div class="app">
+
+  <!-- LEFT PANEL -->
+  <aside class="left-panel">
+
+    <div class="accordion-item open" data-acc="general">
+      <div class="accordion-header">Thông tin chung</div>
+      <div class="accordion-body">
+
+        <div class="field">
+          <label>Chọn template <span class="tip" title="8 bộ template sẵn — chọn phong cách phù hợp">?</span></label>
+          <div class="template-picker" id="template-picker">
+            <div class="template-card active" data-tpl="executive">
+              <div class="swatch"><span style="background:#C22620"></span><span style="background:#fff"></span><span style="background:#D4AF37"></span></div>Executive
+            </div>
+            <div class="template-card" data-tpl="minimal">
+              <div class="swatch"><span style="background:#fff"></span><span style="background:#C22620"></span><span style="background:#D4AF37"></span></div>Minimal
+            </div>
+            <div class="template-card" data-tpl="dark">
+              <div class="swatch"><span style="background:#1B2A4A"></span><span style="background:#C22620"></span><span style="background:#D4AF37"></span></div>Dark
+            </div>
+            <div class="template-card" data-tpl="redBlack">
+              <div class="swatch"><span style="background:#1A1A1A"></span><span style="background:#C22620"></span><span style="background:#D4AF37"></span></div>Đỏ Đen
+            </div>
+            <div class="template-card" data-tpl="redGray">
+              <div class="swatch"><span style="background:#4A4A4A"></span><span style="background:#C22620"></span><span style="background:#D4AF37"></span></div>Đỏ Ghi
+            </div>
+            <div class="template-card" data-tpl="corporate">
+              <div class="swatch"><span style="background:#fff;border:2px solid #C22620"></span><span style="background:#C22620"></span><span style="background:#1A1A1A"></span></div>Corporate
+            </div>
+            <div class="template-card" data-tpl="premiumGold">
+              <div class="swatch"><span style="background:#C22620"></span><span style="background:#D4AF37"></span><span style="background:#fff"></span></div>Premium Gold
+            </div>
+            <div class="template-card" data-tpl="splitRed">
+              <div class="swatch"><span style="background:#C22620;flex:.6"></span><span style="background:#fff;flex:1.4"></span></div>Split Red
+            </div>
+          </div>
+        </div>
+
+        <div class="field featured">
+          <label>Chủ đề buổi học <span class="tip" title="Hiển thị H1 trên Cover + footer trái. Cỡ chữ chỉnh ở panel Typography — Cover">?</span></label>
+          <input type="text" id="f-topic" placeholder="VD: Quản trị Chiến lược cho CEO">
+        </div>
+
+        <div class="field">
+          <label>Tên chương trình / khóa học <span class="tip" title="Tên khóa học dài — hiển thị trên cover">?</span></label>
+          <input type="text" id="f-program" placeholder="VD: Tư duy Quản trị Gốc">
+        </div>
+
+        <div class="field">
+          <label>Ngày tháng buổi học <span class="tip" title="Chọn từ ngày đến ngày — tự format 14-15/05/2026">?</span></label>
+          <div class="date-row">
+            <input type="date" id="f-date-from">
+            <input type="date" id="f-date-to">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Diễn giả <span class="tip" title="Chỉ nhập tên, font Inter. Cỡ chữ chỉnh ở Typography — Cover">?</span></label>
+          <div id="speakers-list"></div>
+          <button class="btn ghost mini" id="btn-add-speaker">+ Thêm diễn giả</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="slides">
+      <div class="accordion-header">Nội dung slide</div>
+      <div class="accordion-body">
+        <div class="btn-row" style="margin-bottom:10px">
+          <button class="btn mini" id="btn-add-slide">+ Thêm slide</button>
+          <button class="btn ghost mini" id="btn-preview" title="Render lại toàn bộ preview">Tạo preview</button>
+        </div>
+        <div id="slides-list"></div>
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="images">
+      <div class="accordion-header">Ảnh — slide hiện tại <span id="current-slide-label" style="margin-left:auto;font-size:11px;color:#888"></span></div>
+      <div class="accordion-body">
+        <div class="field">
+          <label>Thêm ảnh vào slide hiện tại <span class="tip" title="Có thể chọn nhiều ảnh một lúc">?</span></label>
+          <input type="file" id="f-add-image" accept="image/*" multiple>
+        </div>
+        <div id="images-list"></div>
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="typo-ct">
+      <div class="accordion-header">Typography — Cover + Thank You</div>
+      <div class="accordion-body">
+        <div class="field">
+          <label>Cỡ chữ tên chương trình <span class="val" id="v-cv-prog"></span><span class="tip" title="Hàng 1 trên Cover — vai trò phụ, font Oswald nhỏ">?</span></label>
+          <input type="range" id="s-cv-prog" min="12" max="36" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ tên chủ đề (H1 bold) <span class="val" id="v-cv-topic"></span><span class="tip" title="Hàng 2 trên Cover — điểm nhấn lớn nhất, Oswald bold">?</span></label>
+          <input type="range" id="s-cv-topic" min="32" max="120" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ tên diễn giả <span class="val" id="v-cv-speaker"></span></label>
+          <input type="range" id="s-cv-speaker" min="12" max="32" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ ngày tháng <span class="val" id="v-cv-date"></span></label>
+          <input type="range" id="s-cv-date" min="10" max="24" step="1">
+        </div>
+        <div class="field">
+          <label>Căn chỉnh</label>
+          <select id="s-cv-align">
+            <option value="left">Trái</option>
+            <option value="center">Giữa</option>
+            <option value="right">Phải</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Letter spacing <span class="val" id="v-cv-ls"></span></label>
+          <input type="range" id="s-cv-ls" min="-2" max="10" step=".5">
+        </div>
+        <button class="btn ghost mini" id="btn-reset-ct">Reset Cover + Thank You</button>
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="typo-section">
+      <div class="accordion-header">Typography — Section Divider</div>
+      <div class="accordion-body">
+        <div class="field">
+          <label>Cỡ chữ số thứ tự (H1) <span class="val" id="v-sec-num"></span></label>
+          <input type="range" id="s-sec-num" min="40" max="160" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ tên chương (H2) <span class="val" id="v-sec-title"></span></label>
+          <input type="range" id="s-sec-title" min="20" max="72" step="1">
+        </div>
+        <div class="field">
+          <label>Căn chỉnh</label>
+          <select id="s-sec-align">
+            <option value="left">Trái</option>
+            <option value="center">Giữa</option>
+            <option value="right">Phải</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Letter spacing <span class="val" id="v-sec-ls"></span></label>
+          <input type="range" id="s-sec-ls" min="-2" max="10" step=".5">
+        </div>
+        <button class="btn ghost mini" id="btn-reset-section">Reset Section</button>
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="typo-body">
+      <div class="accordion-header">Typography — Slide thân bài</div>
+      <div class="accordion-body">
+        <div class="field">
+          <label>Cỡ chữ tiêu đề (Oswald bold) <span class="val" id="v-h1"></span><span class="tip" title="Áp dụng cho tiêu đề của Content 1 cột, 2 cột, Content + ảnh">?</span></label>
+          <input type="range" id="s-h1" min="24" max="40" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ H2 <span class="val" id="v-h2"></span></label>
+          <input type="range" id="s-h2" min="16" max="32" step="1">
+        </div>
+        <div class="field">
+          <label>Cỡ chữ body (Inter) <span class="val" id="v-body"></span></label>
+          <input type="range" id="s-body" min="10" max="24" step="1">
+        </div>
+        <div class="field">
+          <label>Căn chỉnh text</label>
+          <select id="s-align">
+            <option value="left">Trái</option>
+            <option value="center">Giữa</option>
+            <option value="right">Phải</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Màu chữ body <span class="tip" title="Auto = theo template. Ép màu đỏ / vàng / trắng nếu muốn">?</span></label>
+          <select id="s-color">
+            <option value="auto">Tự động (theo template)</option>
+            <option value="#C22620">Đỏ #C22620</option>
+            <option value="#D4AF37">Vàng #D4AF37</option>
+            <option value="#FFFFFF">Trắng #FFFFFF</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Letter spacing H1 <span class="val" id="v-ls1"></span></label>
+          <input type="range" id="s-ls1" min="-2" max="10" step=".5">
+        </div>
+        <div class="field">
+          <label>Letter spacing body <span class="val" id="v-lsb"></span></label>
+          <input type="range" id="s-lsb" min="-1" max="5" step=".1">
+        </div>
+        <div class="field">
+          <label>Line height <span class="val" id="v-lh"></span></label>
+          <input type="range" id="s-lh" min="1" max="2.5" step=".05">
+        </div>
+        <div class="field">
+          <label>Word spacing <span class="val" id="v-ws"></span></label>
+          <input type="range" id="s-ws" min="-2" max="10" step=".5">
+        </div>
+        <div class="field">
+          <label>Padding nội dung <span class="val" id="v-pad"></span></label>
+          <input type="range" id="s-pad" min="0" max="120" step="1">
+        </div>
+        <div class="field">
+          <label>Khoảng cách giữa elements <span class="val" id="v-gap"></span></label>
+          <input type="range" id="s-gap" min="0" max="60" step="1">
+        </div>
+        <button class="btn ghost mini" id="btn-reset-content">Reset Nội dung về mặc định</button>
+      </div>
+    </div>
+
+    <div class="accordion-item" data-acc="logo">
+      <div class="accordion-header">Logo</div>
+      <div class="accordion-body">
+        <div class="field">
+          <label>Upload logo <span class="tip" title="Tự động crop viền trắng/trong suốt, áp dụng mọi slide">?</span></label>
+          <input type="file" id="f-logo" accept="image/*">
+        </div>
+        <div class="field">
+          <label>Vị trí logo</label>
+          <select id="logo-position">
+            <option value="left">Trái</option>
+            <option value="center">Giữa</option>
+            <option value="right">Phải</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Kích thước logo <span class="val" id="v-logo-size"></span></label>
+          <input type="range" id="logo-size" min="0.4" max="2.2" step="0.05">
+        </div>
+        <div id="logo-preview" style="margin-top:8px;display:none">
+          <div style="font-size:11px;color:#666;margin-bottom:4px">Logo đã crop:</div>
+          <img id="logo-preview-img" style="max-width:100%;max-height:80px;background:#f0f0f0;padding:4px;border:1px solid #ddd;border-radius:4px"/>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- CENTER -->
+  <section class="center-panel">
+    <div class="preview-wrapper" id="preview-wrapper">
+      <div class="slide" id="preview-slide"></div>
+    </div>
+    <div class="preview-nav">
+      <button id="nav-prev" title="Slide trước">‹</button>
+      <span class="count" id="slide-count">1 / 1</span>
+      <button id="nav-next" title="Slide sau">›</button>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <aside class="right-panel">
+    <div class="thumb-header">Thumbnails</div>
+    <div class="thumb-list" id="thumb-list"></div>
+  </aside>
+
+</div>
+
+<div class="bottom-bar">
+  <span>XLeader Academy</span>
+  <span>xleader.edu.vn</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= STATE ================= */
+const COVER_DEFAULTS = () => ({
+  programSize: 22,
+  topicSize: 72,
+  speakerSize: 18,
+  dateSize: 16,
+  align: 'left',
+  letterSpacing: 0
+});
+const SECTION_DEFAULTS = () => ({
+  numberSize: 128,
+  titleSize: 48,
+  align: 'left',
+  letterSpacing: 0
+});
+const TYPO_DEFAULTS = () => ({
+  h1Size: 32, h2Size: 22, h3Size: 20, bodySize: 16,
+  align: 'left',
+  textColor: 'auto',
+  h1LetterSpacing: 0,
+  bodyLetterSpacing: 0,
+  lineHeight: 1.45,
+  wordSpacing: 0,
+  padding: 60,
+  elementGap: 18
+});
+
+const DEFAULT_STATE = () => ({
+  general: {
+    programName: 'Tư duy Quản trị Gốc',
+    topicName: 'Quản trị Chiến lược cho CEO',
+    dateFrom: '2026-05-14',
+    dateTo: '2026-05-15',
+    speakers: ['Phạm Khang Thụy']
+  },
+  cover: COVER_DEFAULTS(),
+  section: SECTION_DEFAULTS(),
+  logo: { src: '', position: 'left', size: 1 },
+  template: 'executive',
+  typography: TYPO_DEFAULTS(),
+  slides: [
+    { layout: 'cover', title: 'Tư duy Quản trị Gốc' },
+    { layout: 'section', title: 'Chiến lược Tổng thể', sectionNumber: '01' },
+    { layout: 'content1', title: 'Nội dung chính',
+      body: 'Tư duy chiến lược của CEO\nXác định sứ mệnh và tầm nhìn\nPhân tích nội bộ và ngành\nLựa chọn chiến lược tổng quát\nTriển khai và giám sát', images: [] },
+    { layout: 'content2', title: 'So sánh tư duy',
+      col1Title: 'Tư duy cũ', col1Body: 'Phản ứng theo tình huống\nTập trung ngắn hạn\nĐiều hành theo chức năng',
+      col2Title: 'Tư duy mới', col2Body: 'Chủ động định hướng\nTầm nhìn dài hạn\nQuản trị theo hệ thống', images: [] },
+    { layout: 'contentImage', title: 'Phân tích môi trường',
+      body: 'Mô hình 5 áp lực cạnh tranh\nPhân tích PESTEL\nChuỗi giá trị Porter', images: [] },
+    { layout: 'thankyou', title: 'Cảm ơn', body: 'XLeader Academy\nxleader.edu.vn' }
+  ],
+  currentIndex: 0
+});
+
+function migrateState(){
+  if (!state.cover){
+    state.cover = COVER_DEFAULTS();
+    if (state.general && state.general.topicSize != null){ state.cover.topicSize = state.general.topicSize; delete state.general.topicSize; }
+    if (state.general && state.general.speakerSize != null){ state.cover.speakerSize = state.general.speakerSize; delete state.general.speakerSize; }
+  }
+  // v2 had state.thankyou — merge its values into state.cover then drop
+  if (state.thankyou){
+    if (state.cover.topicSize == null && state.thankyou.titleSize != null) state.cover.topicSize = Math.min(120, state.thankyou.titleSize);
+    if (state.cover.programSize == null && state.thankyou.subSize != null) state.cover.programSize = state.thankyou.subSize;
+    if (state.cover.dateSize == null && state.thankyou.contactSize != null) state.cover.dateSize = state.thankyou.contactSize;
+    delete state.thankyou;
+  }
+  if (state.typography && state.typography.thankyouSize != null) delete state.typography.thankyouSize;
+  if (!state.section) state.section = SECTION_DEFAULTS();
+  // Clamp ranges to new bounds
+  state.cover.programSize = Math.max(12, Math.min(36, state.cover.programSize ?? 22));
+  state.cover.topicSize = Math.max(32, Math.min(120, state.cover.topicSize ?? 72));
+  state.cover.speakerSize = Math.max(12, Math.min(32, state.cover.speakerSize ?? 18));
+  state.cover.dateSize = Math.max(10, Math.min(24, state.cover.dateSize ?? 16));
+  state.section.numberSize = Math.max(40, Math.min(160, state.section.numberSize ?? 128));
+  state.section.titleSize = Math.max(20, Math.min(72, state.section.titleSize ?? 48));
+  if (state.typography){
+    state.typography.h1Size = Math.max(24, Math.min(40, state.typography.h1Size ?? 32));
+    state.typography.h2Size = Math.max(16, Math.min(32, state.typography.h2Size ?? 22));
+    state.typography.bodySize = Math.max(10, Math.min(24, state.typography.bodySize ?? 16));
+  }
+}
+
+let state = DEFAULT_STATE();
+const history = { stack: [], pointer: -1 };
+let historyLock = false;
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+function toast(msg, ms = 1800){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function snapshot(){
+  if (historyLock) return;
+  const json = JSON.stringify(state);
+  if (history.stack[history.pointer] === json) return;
+  if (history.pointer < history.stack.length - 1){
+    history.stack = history.stack.slice(0, history.pointer + 1);
+  }
+  history.stack.push(json);
+  if (history.stack.length > 60) history.stack.shift();
+  history.pointer = history.stack.length - 1;
+}
+function undo(){
+  if (history.pointer <= 0) return;
+  history.pointer--;
+  state = JSON.parse(history.stack[history.pointer]);
+  historyLock = true; syncFormFromState(); renderAll(); historyLock = false;
+  toast('Đã hoàn tác');
+}
+function redo(){
+  if (history.pointer >= history.stack.length - 1) return;
+  history.pointer++;
+  state = JSON.parse(history.stack[history.pointer]);
+  historyLock = true; syncFormFromState(); renderAll(); historyLock = false;
+  toast('Đã làm lại');
+}
+
+function fileToDataURL(f){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  });
+}
+
+function fmt(n, d = 0){ return Number(n).toFixed(d); }
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function parseDate(s){
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+function pad2(n){ return String(n).padStart(2,'0') }
+function formatDateRange(from, to){
+  const a = parseDate(from), b = parseDate(to);
+  if (!a && !b) return '';
+  if (!b || (a && b && a.getTime() === b.getTime())){
+    const d = a || b;
+    return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
+  }
+  if (!a) return formatDateRange(to, null);
+  if (a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth())
+    return `${pad2(a.getDate())}-${pad2(b.getDate())}/${pad2(a.getMonth()+1)}/${a.getFullYear()}`;
+  if (a.getFullYear() === b.getFullYear())
+    return `${pad2(a.getDate())}/${pad2(a.getMonth()+1)} - ${pad2(b.getDate())}/${pad2(b.getMonth()+1)}/${a.getFullYear()}`;
+  return `${pad2(a.getDate())}/${pad2(a.getMonth()+1)}/${a.getFullYear()} - ${pad2(b.getDate())}/${pad2(b.getMonth()+1)}/${b.getFullYear()}`;
+}
+
+/* ================= LOGO AUTO-CROP ================= */
+async function autoCropImage(dataURL){
+  return new Promise(res => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        const W = img.width, H = img.height;
+        c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        let data;
+        try { data = ctx.getImageData(0, 0, W, H).data; }
+        catch(e){ res(dataURL); return; }
+        let minX = W, minY = H, maxX = -1, maxY = -1;
+        const THRESH = 240;
+        for (let y = 0; y < H; y++){
+          for (let x = 0; x < W; x++){
+            const i = (y * W + x) * 4;
+            const a = data[i+3];
+            if (a < 12) continue;
+            const r = data[i], g = data[i+1], b = data[i+2];
+            if (r > THRESH && g > THRESH && b > THRESH) continue;
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+          }
+        }
+        if (maxX < 0 || maxY < 0){ res(dataURL); return; }
+        const pad = 2;
+        minX = Math.max(0, minX - pad);
+        minY = Math.max(0, minY - pad);
+        maxX = Math.min(W - 1, maxX + pad);
+        maxY = Math.min(H - 1, maxY + pad);
+        const w = maxX - minX + 1, h = maxY - minY + 1;
+        if (w === W && h === H){ res(dataURL); return; }
+        const c2 = document.createElement('canvas');
+        c2.width = w; c2.height = h;
+        c2.getContext('2d').drawImage(c, minX, minY, w, h, 0, 0, w, h);
+        res(c2.toDataURL('image/png'));
+      } catch(e){ res(dataURL); }
+    };
+    img.onerror = () => res(dataURL);
+    img.src = dataURL;
+  });
+}
+
+function getLogoDims(){
+  // Returns [widthPx, heightPx] of logo in 960x540 coords
+  const img = state.logo._el;
+  if (!img) return [0, 0];
+  const natH = img.naturalHeight || 1;
+  const natW = img.naturalWidth || 1;
+  const h = 48 * state.logo.size; // base ~48px tall (~0.67 inch)
+  const w = h * (natW / natH);
+  return [w, h];
+}
+
+/* ================= TYPOGRAPHY APPLICATION ================= */
+function applyTypo(el, type){
+  const t = state.typography;
+  if (type === 'h1'){
+    el.style.fontSize = t.h1Size + 'px';
+    el.style.letterSpacing = t.h1LetterSpacing + 'px';
+    el.style.lineHeight = Math.max(t.lineHeight - 0.3, 1);
+  } else if (type === 'h2'){
+    el.style.fontSize = t.h2Size + 'px';
+    el.style.letterSpacing = t.h1LetterSpacing + 'px';
+  } else if (type === 'h3'){
+    el.style.fontSize = t.h2Size + 'px';
+    el.style.letterSpacing = t.h1LetterSpacing + 'px';
+  } else if (type === 'body'){
+    el.style.fontSize = t.bodySize + 'px';
+    el.style.letterSpacing = t.bodyLetterSpacing + 'px';
+    el.style.lineHeight = t.lineHeight;
+    el.style.wordSpacing = t.wordSpacing + 'px';
+    if (t.textColor !== 'auto') el.style.color = t.textColor;
+  }
+  if (type !== 'body' && t.textColor !== 'auto') el.style.color = t.textColor;
+  el.style.textAlign = t.align;
+}
+
+/* ================= RENDER SLIDE HTML ================= */
+function renderSlideHTML(slide, container, isThumb = false){
+  const t = state.typography;
+  const tpl = state.template;
+  container.innerHTML = '';
+  container.setAttribute('data-tpl', tpl);
+  container.setAttribute('data-layout', slide.layout);
+  container.style.textAlign = t.align;
+
+  const pad = Math.max(t.padding, 24);
+  const gap = t.elementGap;
+  const hasLogo = !!state.logo.src;
+
+  // Special templates with overlays
+  if (tpl === 'minimal') {
+    const s = document.createElement('div'); s.className = 'left-red'; container.appendChild(s);
+  }
+  if (tpl === 'corporate'){
+    const f = document.createElement('div'); f.className = 'frame'; container.appendChild(f);
+  }
+  if (tpl === 'redGray' && slide.layout === 'cover'){
+    const s = document.createElement('div'); s.className = 'left-red'; container.appendChild(s);
+  }
+  if (tpl === 'splitRed'){
+    const sr = document.createElement('div'); sr.className = 'split-red'; container.appendChild(sr);
+    renderSplitRedSlide(slide, container, pad, gap);
+    renderFooter(slide, container);
+    renderLogo(container);
+    requestAnimationFrame(() => autoFit(container));
+    return;
+  }
+
+  // Content zone for non-split
+  const zone = document.createElement('div');
+  zone.className = 'content-zone ' + slide.layout + (hasLogo ? ' has-logo' : '');
+  zone.style.padding = pad + 'px';
+  // adjust padding-top based on logo presence already accounted for in top offset
+  zone.style.paddingTop = '8px';
+  zone.style.paddingBottom = Math.max(pad - 12, 12) + 'px';
+  container.appendChild(zone);
+
+  if (slide.layout === 'cover'){
+    renderCover(slide, zone, pad, gap);
+  } else if (slide.layout === 'section'){
+    renderSection(slide, zone, pad, gap);
+  } else if (slide.layout === 'content1'){
+    renderContent1(slide, zone, pad, gap);
+  } else if (slide.layout === 'content2'){
+    renderContent2(slide, zone, pad, gap);
+  } else if (slide.layout === 'contentImage'){
+    renderContentImage(slide, zone, pad, gap);
+  } else if (slide.layout === 'thankyou'){
+    renderThankyou(slide, zone, pad, gap);
+  }
+
+  // Extra free images (skip first if used in contentImage)
+  renderFreeImages(slide, container);
+
+  // Logo
+  renderLogo(container);
+
+  // Footer
+  renderFooter(slide, container);
+
+  requestAnimationFrame(() => autoFit(container));
+}
+
+function renderCover(slide, zone, pad, gap){
+  const cv = state.cover;
+  const body = document.createElement('div');
+  body.className = 'cover-body';
+  zone.appendChild(body);
+
+  const leftPad = (state.template === 'minimal' ? 30 : 0);
+  body.style.paddingLeft = leftPad + 'px';
+  body.style.textAlign = cv.align;
+  body.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+
+  // Row 1: Program name (smaller, top)
+  const sub = document.createElement('div');
+  sub.className = 'sub';
+  sub.textContent = state.general.programName || '';
+  sub.style.fontSize = cv.programSize + 'px';
+  sub.style.letterSpacing = cv.letterSpacing + 'px';
+  sub.style.textAlign = cv.align;
+  sub.style.marginBottom = Math.max(gap / 2, 6) + 'px';
+  sub.style.maxWidth = '92%';
+  body.appendChild(sub);
+
+  // Row 2: Topic (H1 bold, big)
+  const h1 = document.createElement('h1');
+  h1.textContent = state.general.topicName || slide.title || '';
+  h1.style.fontSize = cv.topicSize + 'px';
+  h1.style.letterSpacing = cv.letterSpacing + 'px';
+  h1.style.textAlign = cv.align;
+  h1.style.lineHeight = '1.05';
+  h1.style.marginBottom = (gap + 6) + 'px';
+  h1.style.maxWidth = '92%';
+  body.appendChild(h1);
+
+  // Accent line (min 12px gap above/below, hide if no room)
+  const line = document.createElement('div'); line.className = 'accent';
+  line.style.marginTop = '12px';
+  line.style.marginBottom = '12px';
+  body.appendChild(line);
+
+  // Speakers (before date)
+  const sps = (state.general.speakers || []).filter(Boolean);
+  if (sps.length){
+    const ul = document.createElement('ul');
+    ul.className = 'speaker-list';
+    ul.style.fontSize = cv.speakerSize + 'px';
+    ul.style.letterSpacing = cv.letterSpacing + 'px';
+    ul.style.textAlign = cv.align;
+    ul.style.marginTop = '2px';
+    ul.style.marginBottom = Math.max(gap / 2, 6) + 'px';
+    sps.forEach(n => {
+      const li = document.createElement('li');
+      li.textContent = n;
+      li.style.textAlign = cv.align;
+      ul.appendChild(li);
+    });
+    body.appendChild(ul);
+  }
+
+  // Date (after speakers)
+  const dateStr = formatDateRange(state.general.dateFrom, state.general.dateTo);
+  if (dateStr){
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.style.fontSize = cv.dateSize + 'px';
+    meta.style.letterSpacing = cv.letterSpacing + 'px';
+    meta.style.textAlign = cv.align;
+    meta.textContent = dateStr;
+    body.appendChild(meta);
+  }
+
+  // Smart-hide accent line if not enough room (min 12px gap above/below)
+  requestAnimationFrame(() => {
+    if (body.scrollHeight > body.clientHeight + 1){
+      line.style.display = 'none';
+    }
+  });
+}
+
+function renderSection(slide, zone, pad, gap){
+  const sec = state.section;
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  zone.appendChild(body);
+  body.style.textAlign = sec.align;
+  body.style.alignItems = sec.align === 'center' ? 'center' : sec.align === 'right' ? 'flex-end' : 'flex-start';
+
+  const num = document.createElement('div');
+  num.className = 'sec-num';
+  num.textContent = slide.sectionNumber || '01';
+  num.style.fontSize = sec.numberSize + 'px';
+  num.style.letterSpacing = sec.letterSpacing + 'px';
+  num.style.textAlign = sec.align;
+  body.appendChild(num);
+
+  const line = document.createElement('div');
+  line.className = 'accent';
+  line.style.width = '120px';
+  line.style.height = '5px';
+  line.style.margin = '10px 0 ' + (gap + 6) + 'px';
+  body.appendChild(line);
+
+  const h1 = document.createElement('h1');
+  h1.textContent = slide.title || '';
+  h1.style.fontSize = sec.titleSize + 'px';
+  h1.style.letterSpacing = sec.letterSpacing + 'px';
+  h1.style.textAlign = sec.align;
+  body.appendChild(h1);
+}
+
+function contentTitleBlock(slide, zone, gap){
+  const t = state.typography;
+  const ttl = document.createElement('h2');
+  ttl.className = 'cnt-title';
+  ttl.textContent = slide.title || '';
+  ttl.style.fontSize = t.h1Size + 'px';
+  ttl.style.letterSpacing = t.h1LetterSpacing + 'px';
+  ttl.style.textAlign = t.align;
+  zone.appendChild(ttl);
+
+  const line = document.createElement('div');
+  line.className = 'title-underline';
+  line.style.marginBottom = (gap + 6) + 'px';
+  if (t.align === 'center') line.style.marginLeft = 'auto', line.style.marginRight = 'auto';
+  else if (t.align === 'right') line.style.marginLeft = 'auto';
+  zone.appendChild(line);
+}
+
+function renderContent1(slide, zone, pad, gap){
+  const t = state.typography;
+  const inner = document.createElement('div');
+  inner.className = 'content-inner';
+  zone.appendChild(inner);
+  contentTitleBlock(slide, inner, gap);
+
+  const bodyEl = document.createElement('div');
+  bodyEl.className = 'txt';
+  applyTypo(bodyEl, 'body');
+  bodyEl.style.textAlign = t.align;
+  const ul = document.createElement('ul');
+  ul.style.textAlign = t.align;
+  if (t.align !== 'left') ul.style.listStylePosition = 'inside';
+  (slide.body || '').split('\n').filter(l => l.trim()).forEach(l => {
+    const li = document.createElement('li');
+    li.textContent = l;
+    li.style.marginBottom = Math.max(gap / 2, 6) + 'px';
+    li.style.textAlign = t.align;
+    ul.appendChild(li);
+  });
+  bodyEl.appendChild(ul);
+  inner.appendChild(bodyEl);
+}
+
+function renderContent2(slide, zone, pad, gap){
+  const t = state.typography;
+  const inner = document.createElement('div');
+  inner.className = 'content-inner';
+  zone.appendChild(inner);
+  contentTitleBlock(slide, inner, gap);
+
+  const grid = document.createElement('div');
+  grid.className = 'two-col';
+  grid.style.gap = Math.max(gap + 20, 28) + 'px';
+  inner.appendChild(grid);
+
+  [['col1Title','col1Body'],['col2Title','col2Body']].forEach(([tk, bk]) => {
+    const col = document.createElement('div');
+    col.style.textAlign = t.align;
+    const ct = document.createElement('h3');
+    ct.className = 'col-title';
+    ct.textContent = slide[tk] || '';
+    applyTypo(ct, 'h2');
+    ct.style.textAlign = t.align;
+    col.appendChild(ct);
+    const cb = document.createElement('div');
+    cb.className = 'txt';
+    applyTypo(cb, 'body');
+    cb.style.textAlign = t.align;
+    const ul = document.createElement('ul');
+    ul.style.textAlign = t.align;
+    (slide[bk] || '').split('\n').filter(l => l.trim()).forEach(l => {
+      const li = document.createElement('li');
+      li.textContent = l;
+      li.style.marginBottom = Math.max(gap / 2, 5) + 'px';
+      li.style.textAlign = t.align;
+      ul.appendChild(li);
+    });
+    cb.appendChild(ul);
+    col.appendChild(cb);
+    grid.appendChild(col);
+  });
+}
+
+function renderContentImage(slide, zone, pad, gap){
+  const t = state.typography;
+  const inner = document.createElement('div');
+  inner.className = 'content-inner';
+  zone.appendChild(inner);
+  contentTitleBlock(slide, inner, gap);
+
+  const grid = document.createElement('div');
+  grid.className = 'content-with-image';
+  grid.style.gap = Math.max(gap + 8, 22) + 'px';
+  inner.appendChild(grid);
+
+  const txtCol = document.createElement('div');
+  txtCol.className = 'txt';
+  applyTypo(txtCol, 'body');
+  txtCol.style.textAlign = t.align;
+  const ul = document.createElement('ul');
+  ul.style.textAlign = t.align;
+  (slide.body || '').split('\n').filter(l => l.trim()).forEach(l => {
+    const li = document.createElement('li');
+    li.textContent = l;
+    li.style.marginBottom = Math.max(gap / 2, 6) + 'px';
+    li.style.textAlign = t.align;
+    ul.appendChild(li);
+  });
+  txtCol.appendChild(ul);
+  grid.appendChild(txtCol);
+
+  const imgSlot = document.createElement('div');
+  imgSlot.className = 'image-slot';
+  const first = (slide.images || [])[0];
+  if (first){
+    const img = document.createElement('img');
+    img.src = first.src;
+    img.style.objectFit = first.objectFit || 'cover';
+    img.style.transform = `scale(${first.zoom || 1})`;
+    img.style.transformOrigin = 'center';
+    img.style.objectPosition = `${first.posX ?? 50}% ${first.posY ?? 50}%`;
+    imgSlot.appendChild(img);
+  } else {
+    imgSlot.style.display = 'flex';
+    imgSlot.style.alignItems = 'center';
+    imgSlot.style.justifyContent = 'center';
+    imgSlot.style.color = '#bbb';
+    imgSlot.style.fontSize = '12px';
+    imgSlot.style.fontFamily = 'Inter,sans-serif';
+    imgSlot.textContent = 'Chưa có ảnh';
+  }
+  grid.appendChild(imgSlot);
+}
+
+function renderThankyou(slide, zone, pad, gap){
+  const cv = state.cover;
+  const wrap = document.createElement('div');
+  wrap.className = 'ty-body-wrap';
+  zone.appendChild(wrap);
+  wrap.style.textAlign = cv.align;
+  wrap.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+
+  const line = document.createElement('div');
+  line.className = 'accent';
+  line.style.width = '120px';
+  line.style.height = '5px';
+  line.style.marginBottom = (gap + 6) + 'px';
+  wrap.appendChild(line);
+
+  const ttl = document.createElement('div');
+  ttl.className = 'ty-title';
+  ttl.textContent = slide.title || 'Cảm ơn';
+  ttl.style.fontSize = cv.topicSize + 'px';
+  ttl.style.letterSpacing = cv.letterSpacing + 'px';
+  ttl.style.textAlign = cv.align;
+  wrap.appendChild(ttl);
+
+  const lines = (slide.body || '').split('\n').filter(l => l.trim());
+  const subLine = lines[0] || '';
+  const contactLines = lines.slice(1);
+
+  if (subLine){
+    const sb = document.createElement('div');
+    sb.className = 'ty-body';
+    sb.style.fontSize = cv.programSize + 'px';
+    sb.style.letterSpacing = cv.letterSpacing + 'px';
+    sb.style.lineHeight = state.typography.lineHeight;
+    sb.style.textAlign = cv.align;
+    sb.style.marginBottom = Math.max(gap / 2, 6) + 'px';
+    sb.textContent = subLine;
+    wrap.appendChild(sb);
+  }
+  if (contactLines.length){
+    const ct = document.createElement('div');
+    ct.className = 'ty-body';
+    ct.style.fontSize = cv.dateSize + 'px';
+    ct.style.letterSpacing = cv.letterSpacing + 'px';
+    ct.style.lineHeight = state.typography.lineHeight;
+    ct.style.textAlign = cv.align;
+    ct.innerHTML = contactLines.map(escapeHtml).join('<br>');
+    wrap.appendChild(ct);
+  }
+}
+
+function renderSplitRedSlide(slide, container, pad, gap){
+  const left = document.createElement('div'); left.className = 'split-left';
+  const right = document.createElement('div'); right.className = 'split-right';
+  container.appendChild(left); container.appendChild(right);
+
+  if (slide.layout === 'cover'){
+    const cv = state.cover;
+    left.style.textAlign = cv.align;
+    right.style.textAlign = cv.align;
+    left.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+    right.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+
+    // Left: program name (small) + speakers
+    const pg = document.createElement('div');
+    pg.textContent = state.general.programName || '';
+    pg.style.fontFamily = "'Oswald',sans-serif";
+    pg.style.fontWeight = '500';
+    pg.style.fontSize = cv.programSize + 'px';
+    pg.style.letterSpacing = cv.letterSpacing + 'px';
+    pg.style.marginBottom = gap + 'px';
+    pg.style.color = 'var(--gold)';
+    pg.style.textAlign = cv.align;
+    left.appendChild(pg);
+
+    const sps = (state.general.speakers || []).filter(Boolean);
+    if (sps.length){
+      const ul = document.createElement('ul');
+      ul.className = 'speaker-list';
+      ul.style.fontSize = cv.speakerSize + 'px';
+      ul.style.letterSpacing = cv.letterSpacing + 'px';
+      ul.style.textAlign = cv.align;
+      sps.forEach(n => {
+        const li = document.createElement('li');
+        li.textContent = n;
+        li.style.textAlign = cv.align;
+        ul.appendChild(li);
+      });
+      left.appendChild(ul);
+    }
+
+    // Right: topic H1 + accent + date (speakers already on left → only date on right)
+    const h1 = document.createElement('h1');
+    h1.textContent = state.general.topicName || slide.title || '';
+    h1.style.fontSize = cv.topicSize + 'px';
+    h1.style.letterSpacing = cv.letterSpacing + 'px';
+    h1.style.textAlign = cv.align;
+    h1.style.marginBottom = gap + 'px';
+    h1.style.fontFamily = "'Oswald',sans-serif";
+    h1.style.fontWeight = '700';
+    h1.style.textTransform = 'uppercase';
+    h1.style.lineHeight = '1.05';
+    right.appendChild(h1);
+
+    const line = document.createElement('div'); line.className = 'accent';
+    line.style.width = '90px'; line.style.height = '4px';
+    line.style.marginTop = '12px';
+    line.style.marginBottom = '12px';
+    right.appendChild(line);
+
+    const dateStr = formatDateRange(state.general.dateFrom, state.general.dateTo);
+    if (dateStr){
+      const d = document.createElement('div');
+      d.className = 'txt';
+      d.style.fontSize = cv.dateSize + 'px';
+      d.style.letterSpacing = cv.letterSpacing + 'px';
+      d.style.textAlign = cv.align;
+      d.textContent = dateStr;
+      right.appendChild(d);
+    }
+
+    requestAnimationFrame(() => {
+      if (right.scrollHeight > right.clientHeight + 1) line.style.display = 'none';
+    });
+  }
+  else if (slide.layout === 'section'){
+    const sec = state.section;
+    left.style.textAlign = sec.align;
+    right.style.textAlign = sec.align;
+    left.style.alignItems = sec.align === 'center' ? 'center' : sec.align === 'right' ? 'flex-end' : 'flex-start';
+    right.style.alignItems = sec.align === 'center' ? 'center' : sec.align === 'right' ? 'flex-end' : 'flex-start';
+
+    const num = document.createElement('div');
+    num.className = 'sec-num';
+    num.textContent = slide.sectionNumber || '01';
+    num.style.fontSize = sec.numberSize + 'px';
+    num.style.letterSpacing = sec.letterSpacing + 'px';
+    num.style.textAlign = sec.align;
+    num.style.fontFamily = "'Oswald',sans-serif";
+    num.style.fontWeight = '700';
+    num.style.lineHeight = '.9';
+    left.appendChild(num);
+
+    const h1 = document.createElement('h1');
+    h1.textContent = slide.title || '';
+    h1.style.fontSize = sec.titleSize + 'px';
+    h1.style.letterSpacing = sec.letterSpacing + 'px';
+    h1.style.textAlign = sec.align;
+    right.appendChild(h1);
+  }
+  else if (slide.layout === 'content1' || slide.layout === 'contentImage'){
+    const t = state.typography;
+    left.style.textAlign = t.align;
+    right.style.textAlign = t.align;
+    const ttl = document.createElement('h2');
+    ttl.textContent = slide.title || '';
+    ttl.style.fontSize = t.h1Size + 'px';
+    ttl.style.letterSpacing = t.h1LetterSpacing + 'px';
+    ttl.style.textAlign = t.align;
+    ttl.style.fontFamily = "'Oswald',sans-serif";
+    ttl.style.fontWeight = '700';
+    ttl.style.textTransform = 'uppercase';
+    ttl.style.lineHeight = '1.1';
+    left.appendChild(ttl);
+
+    if (slide.layout === 'contentImage'){
+      const first = (slide.images || [])[0];
+      if (first){
+        const wrap = document.createElement('div');
+        wrap.style.marginTop = gap + 'px';
+        wrap.style.width = '100%';
+        wrap.style.height = '55%';
+        wrap.style.borderRadius = '8px';
+        wrap.style.overflow = 'hidden';
+        wrap.style.background = '#eee';
+        const img = document.createElement('img');
+        img.src = first.src;
+        img.style.width = '100%'; img.style.height = '100%';
+        img.style.objectFit = first.objectFit || 'cover';
+        img.style.objectPosition = `${first.posX ?? 50}% ${first.posY ?? 50}%`;
+        img.style.transform = `scale(${first.zoom || 1})`;
+        wrap.appendChild(img);
+        right.appendChild(wrap);
+      }
+    }
+
+    const bd = document.createElement('div');
+    bd.className = 'txt';
+    applyTypo(bd, 'body');
+    bd.style.textAlign = t.align;
+    bd.style.marginTop = gap + 'px';
+    const ul = document.createElement('ul');
+    ul.style.textAlign = t.align;
+    (slide.body || '').split('\n').filter(l => l.trim()).forEach(l => {
+      const li = document.createElement('li');
+      li.textContent = l;
+      li.style.marginBottom = Math.max(gap/2, 6) + 'px';
+      li.style.textAlign = t.align;
+      ul.appendChild(li);
+    });
+    bd.appendChild(ul);
+    right.appendChild(bd);
+  }
+  else if (slide.layout === 'content2'){
+    const t = state.typography;
+    left.style.textAlign = t.align;
+    right.style.textAlign = t.align;
+    const ttl = document.createElement('h2');
+    ttl.textContent = slide.title || '';
+    ttl.style.fontSize = t.h1Size + 'px';
+    ttl.style.letterSpacing = t.h1LetterSpacing + 'px';
+    ttl.style.textAlign = t.align;
+    ttl.style.fontFamily = "'Oswald',sans-serif";
+    ttl.style.fontWeight = '700';
+    ttl.style.textTransform = 'uppercase';
+    ttl.style.lineHeight = '1.1';
+    left.appendChild(ttl);
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = '1fr 1fr';
+    grid.style.gap = Math.max(gap + 10, 20) + 'px';
+    grid.style.marginTop = gap + 'px';
+
+    [['col1Title','col1Body'],['col2Title','col2Body']].forEach(([tk, bk]) => {
+      const col = document.createElement('div');
+      col.style.textAlign = t.align;
+      const ch = document.createElement('h3');
+      ch.className = 'col-title';
+      ch.textContent = slide[tk] || '';
+      applyTypo(ch, 'h2');
+      ch.style.textAlign = t.align;
+      col.appendChild(ch);
+      const bd = document.createElement('div');
+      bd.className = 'txt';
+      applyTypo(bd, 'body');
+      bd.style.textAlign = t.align;
+      const ul = document.createElement('ul');
+      ul.style.textAlign = t.align;
+      (slide[bk] || '').split('\n').filter(l => l.trim()).forEach(l => {
+        const li = document.createElement('li');
+        li.textContent = l;
+        li.style.marginBottom = Math.max(gap/2, 4) + 'px';
+        li.style.textAlign = t.align;
+        ul.appendChild(li);
+      });
+      bd.appendChild(ul);
+      col.appendChild(bd);
+      grid.appendChild(col);
+    });
+    right.appendChild(grid);
+  }
+  else if (slide.layout === 'thankyou'){
+    const cv = state.cover;
+    left.style.textAlign = cv.align;
+    right.style.textAlign = cv.align;
+    left.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+    right.style.alignItems = cv.align === 'center' ? 'center' : cv.align === 'right' ? 'flex-end' : 'flex-start';
+
+    const pg = document.createElement('div');
+    pg.textContent = state.general.programName || '';
+    pg.style.fontFamily = "'Oswald',sans-serif";
+    pg.style.fontWeight = '500';
+    pg.style.fontSize = cv.programSize + 'px';
+    pg.style.letterSpacing = cv.letterSpacing + 'px';
+    pg.style.color = 'var(--gold)';
+    pg.style.marginBottom = gap + 'px';
+    pg.style.textAlign = cv.align;
+    left.appendChild(pg);
+
+    const sps = (state.general.speakers || []).filter(Boolean);
+    if (sps.length){
+      const ul = document.createElement('ul');
+      ul.className = 'speaker-list';
+      ul.style.fontSize = cv.speakerSize + 'px';
+      ul.style.letterSpacing = cv.letterSpacing + 'px';
+      ul.style.textAlign = cv.align;
+      sps.forEach(n => {
+        const li = document.createElement('li');
+        li.textContent = n;
+        li.style.textAlign = cv.align;
+        ul.appendChild(li);
+      });
+      left.appendChild(ul);
+    }
+
+    const ttl = document.createElement('div');
+    ttl.className = 'ty-title';
+    ttl.textContent = slide.title || 'Cảm ơn';
+    ttl.style.fontSize = cv.topicSize + 'px';
+    ttl.style.letterSpacing = cv.letterSpacing + 'px';
+    ttl.style.color = 'var(--red)';
+    ttl.style.textAlign = cv.align;
+    right.appendChild(ttl);
+
+    const lines = (slide.body || '').split('\n').filter(l => l.trim());
+    const subLine = lines[0] || '';
+    const contactLines = lines.slice(1);
+    if (subLine){
+      const sb = document.createElement('div');
+      sb.className = 'ty-body';
+      sb.style.fontSize = cv.programSize + 'px';
+      sb.style.letterSpacing = cv.letterSpacing + 'px';
+      sb.style.color = 'var(--ink)';
+      sb.style.lineHeight = state.typography.lineHeight;
+      sb.style.marginTop = gap + 'px';
+      sb.style.textAlign = cv.align;
+      sb.textContent = subLine;
+      right.appendChild(sb);
+    }
+    if (contactLines.length){
+      const ct = document.createElement('div');
+      ct.className = 'ty-body';
+      ct.style.fontSize = cv.dateSize + 'px';
+      ct.style.letterSpacing = cv.letterSpacing + 'px';
+      ct.style.color = 'var(--ink)';
+      ct.style.lineHeight = state.typography.lineHeight;
+      ct.style.textAlign = cv.align;
+      ct.innerHTML = contactLines.map(escapeHtml).join('<br>');
+      right.appendChild(ct);
+    }
+  }
+
+  renderFreeImages(slide, container);
+}
+
+function renderFreeImages(slide, container){
+  const start = (slide.layout === 'contentImage' || (state.template === 'splitRed' && slide.layout === 'contentImage')) ? 1 : 0;
+  (slide.images || []).slice(start).forEach(im => {
+    const d = document.createElement('div');
+    d.className = 'free-image';
+    d.style.left = (im.posX ?? 60) + '%';
+    d.style.top = (im.posY ?? 60) + '%';
+    d.style.width = '240px';
+    d.style.height = '160px';
+    d.style.transform = `translate(-50%, -50%) scale(${im.zoom || 1})`;
+    const img = document.createElement('img');
+    img.src = im.src;
+    img.style.objectFit = im.objectFit || 'cover';
+    d.appendChild(img);
+    container.appendChild(d);
+  });
+}
+
+function renderLogo(container){
+  if (!state.logo.src) return;
+  const img = document.createElement('img');
+  img.className = 'logo-on-slide';
+  img.src = state.logo.src;
+  img.onload = () => {
+    state.logo._el = img;
+    state.logo._natW = img.naturalWidth;
+    state.logo._natH = img.naturalHeight;
+  };
+  const h = 48 * state.logo.size;
+  img.style.height = h + 'px';
+  img.style.width = 'auto';
+  img.style.maxWidth = (200 * state.logo.size) + 'px';
+  const pos = state.logo.position;
+  if (pos === 'left'){ img.style.left = '30px'; }
+  else if (pos === 'right'){ img.style.right = '30px'; }
+  else { img.style.left = '50%'; img.style.transform = 'translateX(-50%)'; }
+  container.appendChild(img);
+}
+
+function renderFooter(slide, container){
+  const lineColor = (state.template === 'minimal' || state.template === 'corporate') ? '#C22620' : '#D4AF37';
+  const line = document.createElement('div');
+  line.style.cssText = `position:absolute;left:0;right:0;bottom:21.6px;height:1px;z-index:201;background:${lineColor}`;
+  container.appendChild(line);
+
+  const footer = document.createElement('div');
+  footer.className = 'slide-footer';
+  const l = document.createElement('span');
+  l.textContent = state.general.topicName || '';
+  l.style.fontWeight = '700';
+  const r = document.createElement('span');
+  r.textContent = 'TƯ DUY QUẢN TRỊ GỐC — XLeader Academy';
+  footer.appendChild(l); footer.appendChild(r);
+  container.appendChild(footer);
+}
+
+function autoFit(container){
+  const els = container.querySelectorAll('h1, h2, h3, .cnt-title, .ty-title, .sub, .txt, .speaker-list, .sec-num, .meta');
+  els.forEach(n => {
+    let tries = 0;
+    while ((n.scrollHeight > n.clientHeight + 2 || n.scrollWidth > n.clientWidth + 2) && tries < 16){
+      const cur = parseFloat(getComputedStyle(n).fontSize);
+      if (cur <= 10) break;
+      n.style.fontSize = (cur * 0.94) + 'px';
+      tries++;
+    }
+  });
+}
+
+/* ================= UI SECTIONS ================= */
+function scalePreview(){
+  const wrap = $('#preview-wrapper');
+  const slide = $('#preview-slide');
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  const sc = Math.min(w / 960, h / 540);
+  slide.style.transform = `scale(${sc})`;
+  slide.style.position = 'absolute';
+  slide.style.top = '0';
+  slide.style.left = '0';
+}
+
+function renderPreview(){
+  const s = state.slides[state.currentIndex];
+  if (!s) return;
+  renderSlideHTML(s, $('#preview-slide'));
+  scalePreview();
+  $('#slide-count').textContent = `${state.currentIndex + 1} / ${state.slides.length}`;
+  $('#nav-prev').disabled = state.currentIndex <= 0;
+  $('#nav-next').disabled = state.currentIndex >= state.slides.length - 1;
+}
+
+function renderThumbnails(){
+  const list = $('#thumb-list');
+  list.innerHTML = '';
+  state.slides.forEach((s, i) => {
+    const th = document.createElement('div');
+    th.className = 'thumb' + (i === state.currentIndex ? ' active' : '');
+    th.onclick = () => {
+      state.currentIndex = i;
+      renderPreview();
+      renderThumbnails();
+      renderImagesList();
+      updateCurrentSlideLabel();
+    };
+    const num = document.createElement('div'); num.className = 'num'; num.textContent = i + 1;
+    th.appendChild(num);
+
+    const inner = document.createElement('div');
+    inner.className = 'slide thumb-inner';
+    renderSlideHTML(s, inner, true);
+    th.appendChild(inner);
+    list.appendChild(th);
+    requestAnimationFrame(() => {
+      const sc = th.clientWidth / 960;
+      inner.style.transform = `scale(${sc})`;
+    });
+  });
+}
+
+function renderSlidesList(){
+  const list = $('#slides-list');
+  list.innerHTML = '';
+  state.slides.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'slide-list-item';
+    const h4 = document.createElement('h4');
+    h4.innerHTML = `<span>Slide ${i+1}</span>`;
+    const mini = document.createElement('span'); mini.className = 'mini-actions';
+    const up = btnMini('↑', 'ghost', () => { if (i>0){ swap(i, i-1); state.currentIndex = i-1; snapshot(); renderAll(); }});
+    const down = btnMini('↓', 'ghost', () => { if (i<state.slides.length-1){ swap(i, i+1); state.currentIndex = i+1; snapshot(); renderAll(); }});
+    const del = btnMini('X', 'danger', () => {
+      if (state.slides.length <= 1){ toast('Phải có ít nhất 1 slide'); return; }
+      state.slides.splice(i,1);
+      if (state.currentIndex >= state.slides.length) state.currentIndex = state.slides.length - 1;
+      snapshot(); renderAll();
+    });
+    mini.append(up, down, del);
+    h4.appendChild(mini);
+    item.appendChild(h4);
+
+    const fL = document.createElement('div'); fL.className = 'field';
+    fL.innerHTML = '<label>Layout</label>';
+    const sel = document.createElement('select');
+    [['cover','Cover'],['section','Section divider'],['content1','Content 1 cột'],['content2','Content 2 cột'],['contentImage','Content + ảnh'],['thankyou','Thank you']].forEach(([v,l]) => {
+      const o = document.createElement('option'); o.value = v; o.textContent = l;
+      if (v === s.layout) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = () => { s.layout = sel.value; snapshot(); renderAll(); };
+    fL.appendChild(sel); item.appendChild(fL);
+
+    const fT = document.createElement('div'); fT.className = 'field';
+    fT.innerHTML = '<label>Tiêu đề slide</label>';
+    const ti = document.createElement('input'); ti.type = 'text';
+    ti.placeholder = 'Nhập tiêu đề slide';
+    ti.value = s.title || '';
+    ti.oninput = () => { s.title = ti.value; renderPreviewAndThumbs(); };
+    ti.onchange = () => snapshot();
+    fT.appendChild(ti); item.appendChild(fT);
+
+    if (s.layout === 'section'){
+      const f = document.createElement('div'); f.className = 'field';
+      f.innerHTML = '<label>Số thứ tự chương</label>';
+      const inp = document.createElement('input'); inp.type = 'text';
+      inp.placeholder = 'VD: 01';
+      inp.value = s.sectionNumber || '';
+      inp.oninput = () => { s.sectionNumber = inp.value; renderPreviewAndThumbs(); };
+      inp.onchange = () => snapshot();
+      f.appendChild(inp); item.appendChild(f);
+    }
+    if (s.layout === 'content1' || s.layout === 'contentImage' || s.layout === 'thankyou'){
+      const f = document.createElement('div'); f.className = 'field';
+      f.innerHTML = '<label>Nội dung (mỗi dòng = 1 bullet)</label>';
+      const ta = document.createElement('textarea');
+      ta.placeholder = 'Nhập nội dung...';
+      ta.value = s.body || '';
+      ta.oninput = () => { s.body = ta.value; renderPreviewAndThumbs(); };
+      ta.onchange = () => snapshot();
+      f.appendChild(ta); item.appendChild(f);
+    }
+    if (s.layout === 'content2'){
+      [['col1Title','Cột 1 — tiêu đề','col1Body','Cột 1 — nội dung'],
+       ['col2Title','Cột 2 — tiêu đề','col2Body','Cột 2 — nội dung']].forEach(([tk,tl,bk,bl]) => {
+        const ft = document.createElement('div'); ft.className = 'field';
+        ft.innerHTML = `<label>${tl}</label>`;
+        const ti = document.createElement('input'); ti.type = 'text';
+        ti.placeholder = tl;
+        ti.value = s[tk] || '';
+        ti.oninput = () => { s[tk] = ti.value; renderPreviewAndThumbs(); };
+        ti.onchange = () => snapshot();
+        ft.appendChild(ti); item.appendChild(ft);
+        const fb = document.createElement('div'); fb.className = 'field';
+        fb.innerHTML = `<label>${bl}</label>`;
+        const ta = document.createElement('textarea');
+        ta.placeholder = bl;
+        ta.value = s[bk] || '';
+        ta.oninput = () => { s[bk] = ta.value; renderPreviewAndThumbs(); };
+        ta.onchange = () => snapshot();
+        fb.appendChild(ta); item.appendChild(fb);
+      });
+    }
+    list.appendChild(item);
+  });
+}
+
+function swap(a, b){ const t = state.slides[a]; state.slides[a] = state.slides[b]; state.slides[b] = t; }
+function btnMini(text, cls, on){
+  const b = document.createElement('button');
+  b.className = `btn mini ${cls}`; b.textContent = text; b.onclick = on;
+  return b;
+}
+
+function renderImagesList(){
+  const list = $('#images-list');
+  list.innerHTML = '';
+  const s = state.slides[state.currentIndex];
+  if (!s) return;
+  (s.images || []).forEach((im, i) => {
+    const e = document.createElement('div'); e.className = 'img-entry';
+    const th = document.createElement('img');
+    th.className = 'thumb-img'; th.src = im.src; e.appendChild(th);
+
+    e.appendChild(sliderField('Zoom', 0.5, 2, 0.05, im.zoom || 1, v => { im.zoom = v; renderPreviewAndThumbs(); }, v => fmt(v*100,0)+'%'));
+    e.appendChild(sliderField('Vị trí X', 0, 100, 1, im.posX ?? 50, v => { im.posX = v; renderPreviewAndThumbs(); }, v => fmt(v,0)+'%'));
+    e.appendChild(sliderField('Vị trí Y', 0, 100, 1, im.posY ?? 50, v => { im.posY = v; renderPreviewAndThumbs(); }, v => fmt(v,0)+'%'));
+
+    const fit = document.createElement('div'); fit.className = 'field';
+    fit.innerHTML = '<label>Object-fit</label>';
+    const sf = document.createElement('select');
+    ['cover','contain','fill'].forEach(v => {
+      const o = document.createElement('option'); o.value = v; o.textContent = v;
+      if (v === (im.objectFit || 'cover')) o.selected = true;
+      sf.appendChild(o);
+    });
+    sf.onchange = () => { im.objectFit = sf.value; renderPreviewAndThumbs(); snapshot(); };
+    fit.appendChild(sf); e.appendChild(fit);
+
+    const del = document.createElement('button');
+    del.className = 'btn mini danger'; del.textContent = 'Xóa ảnh';
+    del.onclick = () => { s.images.splice(i,1); snapshot(); renderAll(); };
+    e.appendChild(del);
+
+    list.appendChild(e);
+  });
+}
+
+function sliderField(label, min, max, step, val, oninput, fmtFn){
+  const f = document.createElement('div'); f.className = 'field';
+  const l = document.createElement('label');
+  const v = document.createElement('span'); v.className = 'val';
+  v.textContent = fmtFn ? fmtFn(val) : val;
+  l.textContent = label + ' '; l.appendChild(v);
+  f.appendChild(l);
+  const inp = document.createElement('input');
+  inp.type = 'range'; inp.min = min; inp.max = max; inp.step = step; inp.value = val;
+  inp.oninput = () => { const x = Number(inp.value); v.textContent = fmtFn ? fmtFn(x) : x; oninput(x); };
+  inp.onchange = () => snapshot();
+  f.appendChild(inp);
+  return f;
+}
+
+function renderSpeakers(){
+  const list = $('#speakers-list');
+  list.innerHTML = '';
+  (state.general.speakers || []).forEach((n, i) => {
+    const e = document.createElement('div'); e.className = 'speaker-entry';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.placeholder = 'Tên diễn giả'; inp.value = n;
+    inp.oninput = () => { state.general.speakers[i] = inp.value; renderPreviewAndThumbs(); };
+    inp.onchange = () => snapshot();
+    const del = document.createElement('button');
+    del.className = 'btn mini danger'; del.textContent = 'X';
+    del.onclick = () => { state.general.speakers.splice(i,1); snapshot(); renderAll(); };
+    e.appendChild(inp); e.appendChild(del);
+    list.appendChild(e);
+  });
+}
+
+function renderPreviewAndThumbs(){ renderPreview(); renderThumbnails(); }
+function renderAll(){
+  renderSpeakers();
+  renderSlidesList();
+  renderImagesList();
+  renderPreview();
+  renderThumbnails();
+  updateCurrentSlideLabel();
+  updateTemplateCards();
+  updateLogoPreview();
+}
+function updateCurrentSlideLabel(){ $('#current-slide-label').textContent = '#' + (state.currentIndex + 1); }
+function updateTemplateCards(){
+  $$('.template-card').forEach(c => c.classList.toggle('active', c.dataset.tpl === state.template));
+}
+function updateLogoPreview(){
+  const pv = $('#logo-preview');
+  const img = $('#logo-preview-img');
+  if (state.logo.src){ pv.style.display = 'block'; img.src = state.logo.src; }
+  else pv.style.display = 'none';
+}
+
+/* ================= SYNC FORM FROM STATE ================= */
+function syncFormFromState(){
+  $('#f-program').value = state.general.programName || '';
+  $('#f-topic').value = state.general.topicName || '';
+  $('#f-date-from').value = state.general.dateFrom || '';
+  $('#f-date-to').value = state.general.dateTo || '';
+
+  $('#logo-position').value = state.logo.position;
+  $('#logo-size').value = state.logo.size;
+  $('#v-logo-size').textContent = fmt(state.logo.size*100,0)+'%';
+
+  const cv = state.cover;
+  $('#s-cv-prog').value = cv.programSize; $('#v-cv-prog').textContent = cv.programSize+'px';
+  $('#s-cv-topic').value = cv.topicSize; $('#v-cv-topic').textContent = cv.topicSize+'px';
+  $('#s-cv-speaker').value = cv.speakerSize; $('#v-cv-speaker').textContent = cv.speakerSize+'px';
+  $('#s-cv-date').value = cv.dateSize; $('#v-cv-date').textContent = cv.dateSize+'px';
+  $('#s-cv-align').value = cv.align;
+  $('#s-cv-ls').value = cv.letterSpacing; $('#v-cv-ls').textContent = cv.letterSpacing+'px';
+
+  const sec = state.section;
+  $('#s-sec-num').value = sec.numberSize; $('#v-sec-num').textContent = sec.numberSize+'px';
+  $('#s-sec-title').value = sec.titleSize; $('#v-sec-title').textContent = sec.titleSize+'px';
+  $('#s-sec-align').value = sec.align;
+  $('#s-sec-ls').value = sec.letterSpacing; $('#v-sec-ls').textContent = sec.letterSpacing+'px';
+
+  const t = state.typography;
+  $('#s-h1').value = t.h1Size; $('#v-h1').textContent = t.h1Size+'px';
+  $('#s-h2').value = t.h2Size; $('#v-h2').textContent = t.h2Size+'px';
+  $('#s-body').value = t.bodySize; $('#v-body').textContent = t.bodySize+'px';
+  $('#s-align').value = t.align;
+  $('#s-color').value = t.textColor;
+  $('#s-ls1').value = t.h1LetterSpacing; $('#v-ls1').textContent = t.h1LetterSpacing+'px';
+  $('#s-lsb').value = t.bodyLetterSpacing; $('#v-lsb').textContent = t.bodyLetterSpacing+'px';
+  $('#s-lh').value = t.lineHeight; $('#v-lh').textContent = fmt(t.lineHeight,2);
+  $('#s-ws').value = t.wordSpacing; $('#v-ws').textContent = t.wordSpacing+'px';
+  $('#s-pad').value = t.padding; $('#v-pad').textContent = t.padding+'px';
+  $('#s-gap').value = t.elementGap; $('#v-gap').textContent = t.elementGap+'px';
+}
+
+/* ================= PPTX EXPORT ================= */
+// Conversion: preview 960x540 px → 13.33 x 7.5 inch (72pt/inch). Font px → pt = px * 0.75
+const PX2IN = v => v / 72;
+const PX2PT = v => v * 0.75;
+
+const TPL_COLORS = {
+  executive: {
+    cover:    { bg:'C22620', h1:'FFFFFF', sub:'D4AF37', meta:'FFFFFF', accent:'D4AF37' },
+    section:  { bg:'C22620', num:'D4AF37', h1:'FFFFFF', accent:'D4AF37' },
+    content:  { bg:'FFFFFF', title:'C22620', col:'C22620', text:'1A1A1A', underline:'D4AF37', bullet:'C22620' },
+    thankyou: { bg:'C22620', title:'FFFFFF', body:'D4AF37', accent:'D4AF37' }
+  },
+  minimal: {
+    cover:    { bg:'FFFFFF', h1:'1A1A1A', sub:'C22620', meta:'1A1A1A', accent:'C22620', leftStrip:'C22620' },
+    section:  { bg:'FFFFFF', num:'C22620', h1:'1A1A1A', accent:'C22620', leftStrip:'C22620' },
+    content:  { bg:'FFFFFF', title:'C22620', col:'C22620', text:'1A1A1A', underline:'D4AF37', bullet:'C22620', leftStrip:'C22620' },
+    thankyou: { bg:'FFFFFF', title:'C22620', body:'1A1A1A', accent:'C22620', leftStrip:'C22620' }
+  },
+  dark: {
+    cover:    { bg:'1B2A4A', h1:'D4AF37', sub:'FFFFFF', meta:'FFFFFF', accent:'C22620' },
+    section:  { bg:'1B2A4A', num:'C22620', h1:'D4AF37', accent:'C22620' },
+    content:  { bg:'1B2A4A', title:'D4AF37', col:'D4AF37', text:'FFFFFF', underline:'C22620', bullet:'D4AF37' },
+    thankyou: { bg:'1B2A4A', title:'D4AF37', body:'FFFFFF', accent:'C22620' }
+  },
+  redBlack: {
+    cover:    { bg:'1A1A1A', h1:'FFFFFF', sub:'D4AF37', meta:'FFFFFF', accent:'C22620', redLine:true },
+    section:  { bg:'1A1A1A', num:'C22620', h1:'FFFFFF', accent:'C22620' },
+    content:  { bg:'1A1A1A', title:'C22620', col:'D4AF37', text:'FFFFFF', underline:'C22620', bullet:'C22620' },
+    thankyou: { bg:'1A1A1A', title:'D4AF37', body:'FFFFFF', accent:'C22620' }
+  },
+  redGray: {
+    cover:    { bg:'4A4A4A', h1:'FFFFFF', sub:'D4AF37', meta:'FFFFFF', accent:'C22620', leftRed:true },
+    section:  { bg:'4A4A4A', num:'C22620', h1:'D4AF37', accent:'C22620' },
+    content:  { bg:'4A4A4A', title:'D4AF37', col:'D4AF37', text:'FFFFFF', underline:'C22620', bullet:'C22620' },
+    thankyou: { bg:'4A4A4A', title:'D4AF37', body:'FFFFFF', accent:'C22620' }
+  },
+  corporate: {
+    cover:    { bg:'FFFFFF', h1:'C22620', sub:'1A1A1A', meta:'1A1A1A', accent:'C22620', frame:true, centered:true },
+    section:  { bg:'FFFFFF', num:'C22620', h1:'1A1A1A', accent:'C22620', frame:true },
+    content:  { bg:'FFFFFF', title:'C22620', col:'C22620', text:'1A1A1A', underline:'D4AF37', bullet:'C22620', frame:true },
+    thankyou: { bg:'FFFFFF', title:'C22620', body:'1A1A1A', accent:'C22620', frame:true, centered:true }
+  },
+  premiumGold: {
+    cover:    { bg:'C22620', h1:'D4AF37', sub:'FFFFFF', meta:'D4AF37', accent:'D4AF37' },
+    section:  { bg:'C22620', num:'D4AF37', h1:'FFFFFF', accent:'D4AF37' },
+    content:  { bg:'C22620', title:'D4AF37', col:'D4AF37', text:'FFFFFF', underline:'D4AF37', bullet:'D4AF37' },
+    thankyou: { bg:'C22620', title:'D4AF37', body:'FFFFFF', accent:'D4AF37' }
+  },
+  splitRed: {
+    cover:    { bg:'FFFFFF', split:true, leftBg:'C22620', h1:'C22620', sub:'C22620', meta:'1A1A1A', leftText:'FFFFFF', leftAccent:'D4AF37', accent:'D4AF37' },
+    section:  { bg:'FFFFFF', split:true, leftBg:'C22620', num:'D4AF37', h1:'C22620', leftText:'FFFFFF', accent:'D4AF37' },
+    content:  { bg:'FFFFFF', split:true, leftBg:'C22620', title:'D4AF37', col:'C22620', text:'1A1A1A', leftText:'FFFFFF', underline:'D4AF37', bullet:'C22620', accent:'D4AF37' },
+    thankyou: { bg:'FFFFFF', split:true, leftBg:'C22620', title:'C22620', body:'1A1A1A', leftText:'FFFFFF', leftAccent:'D4AF37', accent:'D4AF37' }
+  }
+};
+
+async function exportPPTX(){
+  if (typeof PptxGenJS === 'undefined'){ toast('Thư viện chưa load xong'); return; }
+  toast('Đang xuất PPTX...', 1500);
+  const pptx = new PptxGenJS();
+  pptx.defineLayout({ name: 'XL16x9', width: 13.33, height: 7.5 });
+  pptx.layout = 'XL16x9';
+  pptx.title = state.general.programName || 'XLeader Slides';
+  pptx.company = 'XLeader Academy';
+
+  for (const sl of state.slides){
+    addSlideToPPTX(pptx, sl);
+  }
+
+  const safeName = (state.general.programName || 'XLeader')
+    .replace(/[<>:"/\\|?*]+/g,'').trim().replace(/\s+/g,'_').slice(0,60) || 'XLeader';
+  const dateStr = (state.general.dateFrom || new Date().toISOString().slice(0,10)).replace(/-/g,'');
+  const fname = `XLeader_${safeName}_${dateStr}.pptx`;
+  await pptx.writeFile({ fileName: fname });
+  toast('Xuất thành công: ' + fname, 2600);
+}
+
+function addSlideToPPTX(pptx, slide){
+  const t = state.typography;
+  const C = TPL_COLORS[state.template];
+  let layoutKey = 'content';
+  if (slide.layout === 'cover') layoutKey = 'cover';
+  else if (slide.layout === 'section') layoutKey = 'section';
+  else if (slide.layout === 'thankyou') layoutKey = 'thankyou';
+  const col = C[layoutKey];
+  const SW = 13.33, SH = 7.5;
+  const FOOTER_H = 0.3;
+  const LOGO_TOP = 0.3;
+  const padIn = PX2IN(Math.max(t.padding, 24));
+  const s = pptx.addSlide();
+  s.background = { color: col.bg };
+
+  // Template extras
+  if (state.template === 'minimal'){
+    s.addShape('rect', { x: 0, y: 0, w: PX2IN(14), h: SH - FOOTER_H, fill: { color: col.leftStrip || 'C22620' }, line: { color: col.leftStrip || 'C22620' } });
+  }
+  if (state.template === 'redGray' && slide.layout === 'cover'){
+    s.addShape('rect', { x: 0, y: 0, w: PX2IN(22), h: SH - FOOTER_H, fill: { color: 'C22620' }, line: { color: 'C22620' } });
+  }
+  if (state.template === 'corporate'){
+    s.addShape('rect', { x: PX2IN(14), y: PX2IN(14), w: SW - 2*PX2IN(14), h: SH - FOOTER_H - PX2IN(14) - PX2IN(14), fill: { type: 'none' }, line: { color: 'C22620', width: 4 } });
+  }
+  if (state.template === 'splitRed'){
+    s.addShape('rect', { x: 0, y: 0, w: SW * 0.4, h: SH - FOOTER_H, fill: { color: 'C22620' }, line: { color: 'C22620' } });
+    addSplitRedPPTX(s, slide, col, padIn);
+    addFooterLogoPPTX(s, slide);
+    return;
+  }
+
+  // Render content based on layout
+  const hasLogo = !!state.logo.src;
+  const contentTop = LOGO_TOP + (hasLogo ? PX2IN(48 * state.logo.size) + 0.1 : 0) + 0.3; // symmetrical top spacing
+  const contentTopNoLogo = 0.3 + 0.3; // 0.3 margin + 0.3 gap
+
+  if (slide.layout === 'cover'){
+    const cv = state.cover;
+    let y = 1.5;
+    const leftX = padIn + (state.template === 'minimal' ? PX2IN(30) : 0);
+    const textAlign = (state.template === 'corporate') ? 'center' : cv.align;
+    const maxW = SW - 2*padIn - (state.template === 'minimal' ? PX2IN(30) : 0);
+    // Row 1: Program name (small)
+    s.addText(state.general.programName || '', {
+      x: state.template === 'corporate' ? padIn : leftX, y: y,
+      w: state.template === 'corporate' ? SW - 2*padIn : maxW,
+      h: 0.6,
+      fontSize: PX2PT(cv.programSize), fontFace: 'Oswald', bold: true,
+      color: col.sub, align: textAlign, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    y += PX2IN(cv.programSize) * 1.2 + 0.12;
+    // Row 2: Topic H1 (big)
+    s.addText(state.general.topicName || slide.title || '', {
+      x: state.template === 'corporate' ? padIn : leftX, y: y,
+      w: state.template === 'corporate' ? SW - 2*padIn : maxW,
+      h: 2.4,
+      fontSize: PX2PT(cv.topicSize), fontFace: 'Oswald', bold: true,
+      color: col.h1, align: textAlign, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    y += PX2IN(cv.topicSize) * 1.15 + 0.2;
+    // Accent (only if there's room for at least 12px top + 12px bottom gap + speakers + date)
+    const sps = (state.general.speakers || []).filter(Boolean);
+    const dateStr = formatDateRange(state.general.dateFrom, state.general.dateTo);
+    const remainingNeed = (sps.length ? PX2IN(cv.speakerSize) * 1.5 * sps.length : 0)
+                       + (dateStr ? PX2IN(cv.dateSize) * 1.6 : 0)
+                       + PX2IN(12) * 2 + PX2IN(4);
+    const remaining = (SH - FOOTER_H) - y;
+    if (remaining >= remainingNeed){
+      y += PX2IN(12);
+      s.addShape('rect', {
+        x: state.template === 'corporate' ? (SW/2 - PX2IN(50)) : leftX,
+        y: y, w: PX2IN(100), h: PX2IN(4),
+        fill: { color: col.accent }, line: { color: col.accent }
+      });
+      y += PX2IN(4) + PX2IN(12);
+    }
+    // Speakers (before date)
+    if (sps.length){
+      const txt = sps.map((n, i) => ({ text: n, options: { breakLine: i < sps.length - 1, bold: true } }));
+      s.addText(txt, {
+        x: state.template === 'corporate' ? padIn : leftX, y: y,
+        w: state.template === 'corporate' ? SW - 2*padIn : maxW,
+        h: Math.min(sps.length * 0.4 + 0.1, 2),
+        fontSize: PX2PT(cv.speakerSize), fontFace: 'Inter',
+        color: col.meta, align: textAlign,
+        charSpacing: cv.letterSpacing
+      });
+      y += PX2IN(cv.speakerSize) * 1.5 * sps.length + 0.08;
+    }
+    // Date (after speakers)
+    if (dateStr){
+      s.addText(dateStr, {
+        x: state.template === 'corporate' ? padIn : leftX, y: y,
+        w: state.template === 'corporate' ? SW - 2*padIn : maxW,
+        h: 0.4,
+        fontSize: PX2PT(cv.dateSize), fontFace: 'Inter',
+        color: col.meta, align: textAlign,
+        charSpacing: cv.letterSpacing
+      });
+    }
+  }
+  else if (slide.layout === 'section'){
+    const sec = state.section;
+    let y = 1.3;
+    s.addText(slide.sectionNumber || '01', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 3,
+      fontSize: PX2PT(sec.numberSize), fontFace: 'Oswald', bold: true,
+      color: col.num, align: sec.align, valign: 'top',
+      charSpacing: sec.letterSpacing
+    });
+    y = 4.5;
+    s.addShape('rect', { x: sec.align === 'center' ? (SW/2 - PX2IN(60)) : sec.align === 'right' ? (SW - padIn - PX2IN(120)) : padIn, y: y, w: PX2IN(120), h: PX2IN(5), fill: { color: col.accent }, line: { color: col.accent } });
+    y += 0.25;
+    s.addText(slide.title || '', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 1.6,
+      fontSize: PX2PT(sec.titleSize), fontFace: 'Oswald', bold: true,
+      color: col.h1, align: sec.align, valign: 'top',
+      charSpacing: sec.letterSpacing
+    });
+  }
+  else if (slide.layout === 'content1'){
+    let y = contentTop;
+    s.addText(slide.title || '', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 0.8,
+      fontSize: PX2PT(t.h1Size), fontFace: 'Oswald', bold: true,
+      color: col.title, align: t.align, valign: 'top',
+      charSpacing: t.h1LetterSpacing
+    });
+    y += PX2IN(t.h1Size) * 1.2 + 0.05;
+    s.addShape('rect', { x: t.align === 'center' ? (SW/2 - PX2IN(40)) : t.align === 'right' ? (SW - padIn - PX2IN(80)) : padIn, y: y, w: PX2IN(80), h: PX2IN(4), fill: { color: col.underline }, line: { color: col.underline } });
+    y += 0.22 + PX2IN(t.elementGap);
+    const items = (slide.body || '').split('\n').filter(l => l.trim());
+    const txt = items.map(l => ({ text: l, options: { bullet: { code: '25CF' }, color: col.text } }));
+    if (txt.length){
+      s.addText(txt, {
+        x: padIn, y: y, w: SW - 2*padIn, h: SH - y - FOOTER_H - 0.2,
+        fontSize: PX2PT(t.bodySize), fontFace: 'Inter', color: col.text,
+        align: t.align, valign: 'top',
+        paraSpaceAfter: Math.max(t.elementGap/2, 4),
+        charSpacing: t.bodyLetterSpacing
+      });
+    }
+  }
+  else if (slide.layout === 'content2'){
+    let y = contentTop;
+    s.addText(slide.title || '', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 0.8,
+      fontSize: PX2PT(t.h1Size), fontFace: 'Oswald', bold: true,
+      color: col.title, align: t.align, valign: 'top',
+      charSpacing: t.h1LetterSpacing
+    });
+    y += PX2IN(t.h1Size) * 1.2 + 0.05;
+    s.addShape('rect', { x: t.align === 'center' ? (SW/2 - PX2IN(40)) : t.align === 'right' ? (SW - padIn - PX2IN(80)) : padIn, y: y, w: PX2IN(80), h: PX2IN(4), fill: { color: col.underline }, line: { color: col.underline } });
+    y += 0.22 + PX2IN(t.elementGap);
+    const gapW = PX2IN(t.elementGap + 20);
+    const colW = (SW - 2*padIn - gapW) / 2;
+    [[slide.col1Title, slide.col1Body, padIn],
+     [slide.col2Title, slide.col2Body, padIn + colW + gapW]].forEach(([ct, cb, x]) => {
+      s.addText(ct || '', {
+        x, y, w: colW, h: 0.55,
+        fontSize: PX2PT(t.h2Size), fontFace: 'Oswald', bold: true,
+        color: col.col, align: t.align, valign: 'top',
+        charSpacing: t.h1LetterSpacing
+      });
+      const items = (cb || '').split('\n').filter(l => l.trim());
+      const txt = items.map(l => ({ text: l, options: { bullet: { code: '25CF' }, color: col.text } }));
+      if (txt.length){
+        s.addText(txt, {
+          x, y: y + 0.55, w: colW, h: SH - y - 0.8 - FOOTER_H,
+          fontSize: PX2PT(t.bodySize), fontFace: 'Inter', color: col.text,
+          align: t.align, valign: 'top',
+          paraSpaceAfter: Math.max(t.elementGap/2, 4),
+          charSpacing: t.bodyLetterSpacing
+        });
+      }
+    });
+  }
+  else if (slide.layout === 'contentImage'){
+    let y = contentTop;
+    s.addText(slide.title || '', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 0.8,
+      fontSize: PX2PT(t.h1Size), fontFace: 'Oswald', bold: true,
+      color: col.title, align: t.align, valign: 'top',
+      charSpacing: t.h1LetterSpacing
+    });
+    y += PX2IN(t.h1Size) * 1.2 + 0.05;
+    s.addShape('rect', { x: t.align === 'center' ? (SW/2 - PX2IN(40)) : t.align === 'right' ? (SW - padIn - PX2IN(80)) : padIn, y: y, w: PX2IN(80), h: PX2IN(4), fill: { color: col.underline }, line: { color: col.underline } });
+    y += 0.22 + PX2IN(t.elementGap);
+    const remainH = SH - y - FOOTER_H - 0.2;
+    const gapW = PX2IN(t.elementGap + 8);
+    const textW = (SW - 2*padIn - gapW) * 0.55;
+    const imgW = (SW - 2*padIn - gapW) * 0.45;
+    const items = (slide.body || '').split('\n').filter(l => l.trim());
+    const txt = items.map(l => ({ text: l, options: { bullet: { code: '25CF' }, color: col.text } }));
+    if (txt.length){
+      s.addText(txt, {
+        x: padIn, y, w: textW, h: remainH,
+        fontSize: PX2PT(t.bodySize), fontFace: 'Inter', color: col.text,
+        align: t.align, valign: 'top',
+        paraSpaceAfter: Math.max(t.elementGap/2, 4),
+        charSpacing: t.bodyLetterSpacing
+      });
+    }
+    const firstImg = (slide.images || [])[0];
+    const ix = padIn + textW + gapW;
+    if (firstImg){
+      s.addImage({ data: firstImg.src, x: ix, y, w: imgW, h: remainH, sizing: { type: firstImg.objectFit === 'contain' ? 'contain' : 'cover', w: imgW, h: remainH } });
+    } else {
+      s.addShape('rect', { x: ix, y, w: imgW, h: remainH, fill: { color: 'EEEEEE' }, line: { color: 'DDDDDD' } });
+    }
+  }
+  else if (slide.layout === 'thankyou'){
+    const cv = state.cover;
+    const tAlign = (state.template === 'corporate') ? 'center' : cv.align;
+    let y = 2.3;
+    s.addShape('rect', {
+      x: state.template === 'corporate' ? (SW/2 - PX2IN(60)) : tAlign === 'right' ? (SW - padIn - PX2IN(120)) : padIn,
+      y: y, w: PX2IN(120), h: PX2IN(5),
+      fill: { color: col.accent }, line: { color: col.accent }
+    });
+    y += 0.25;
+    s.addText(slide.title || 'Cảm ơn', {
+      x: padIn, y: y, w: SW - 2*padIn, h: 2.2,
+      fontSize: PX2PT(cv.topicSize), fontFace: 'Oswald', bold: true,
+      color: col.title, align: tAlign, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    y += PX2IN(cv.topicSize) * 1.15 + 0.1;
+    const bodyLines = (slide.body || '').split('\n').filter(l => l.trim());
+    const subLine = bodyLines[0] || '';
+    const contactLines = bodyLines.slice(1);
+    if (subLine){
+      s.addText(subLine, {
+        x: padIn, y, w: SW - 2*padIn, h: 0.7,
+        fontSize: PX2PT(cv.programSize), fontFace: 'Inter',
+        color: col.body, align: tAlign, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+      y += PX2IN(cv.programSize) * 1.5 + 0.08;
+    }
+    if (contactLines.length){
+      s.addText(contactLines.map((l, i) => ({ text: l, options: { breakLine: i < contactLines.length - 1 } })), {
+        x: padIn, y, w: SW - 2*padIn, h: 1.2,
+        fontSize: PX2PT(cv.dateSize), fontFace: 'Inter',
+        color: col.body, align: tAlign, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+    }
+  }
+
+  // Free images
+  const extraStart = slide.layout === 'contentImage' ? 1 : 0;
+  (slide.images || []).slice(extraStart).forEach(im => {
+    const iw = 2.2 * (im.zoom || 1);
+    const ih = 1.5 * (im.zoom || 1);
+    const cx = SW * (im.posX ?? 60) / 100;
+    const cy = (SH - FOOTER_H) * (im.posY ?? 60) / 100;
+    s.addImage({ data: im.src, x: cx - iw/2, y: cy - ih/2, w: iw, h: ih });
+  });
+
+  addFooterLogoPPTX(s, slide);
+}
+
+function addSplitRedPPTX(s, slide, col, padIn){
+  const SW = 13.33, SH = 7.5, FOOTER_H = 0.3;
+  const leftW = SW * 0.4, rightX = leftW, rightW = SW - leftW;
+  const leftPad = PX2IN(50), rightPad = PX2IN(50);
+  const t = state.typography;
+
+  if (slide.layout === 'cover'){
+    const cv = state.cover;
+    // left: program + speakers
+    s.addText(state.general.programName || '', {
+      x: leftPad, y: 2, w: leftW - 2*leftPad, h: 1,
+      fontSize: PX2PT(cv.programSize), fontFace: 'Oswald', bold: true,
+      color: 'D4AF37', align: cv.align, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    const sps = (state.general.speakers || []).filter(Boolean);
+    if (sps.length){
+      s.addText(sps.map((n, i) => ({ text: n, options: { breakLine: i < sps.length - 1, bold: true } })), {
+        x: leftPad, y: 3.2, w: leftW - 2*leftPad, h: 3,
+        fontSize: PX2PT(cv.speakerSize), fontFace: 'Inter',
+        color: 'FFFFFF', align: cv.align, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+    }
+    // right: topic H1 + accent + date
+    let y = 2.1;
+    s.addText(state.general.topicName || slide.title || '', {
+      x: rightX + rightPad, y, w: rightW - 2*rightPad, h: 2.4,
+      fontSize: PX2PT(cv.topicSize), fontFace: 'Oswald', bold: true,
+      color: 'C22620', align: cv.align, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    y += PX2IN(cv.topicSize) * 1.15 + 0.2;
+    const dateStr = formatDateRange(state.general.dateFrom, state.general.dateTo);
+    const remaining = (SH - FOOTER_H) - y;
+    const needDate = dateStr ? PX2IN(cv.dateSize) * 1.6 : 0;
+    if (remaining >= needDate + PX2IN(4) + PX2IN(24)){
+      y += PX2IN(12);
+      s.addShape('rect', { x: rightX + rightPad, y, w: PX2IN(90), h: PX2IN(4), fill: { color: 'D4AF37' }, line: { color: 'D4AF37' } });
+      y += PX2IN(4) + PX2IN(12);
+    }
+    if (dateStr){
+      s.addText(dateStr, {
+        x: rightX + rightPad, y, w: rightW - 2*rightPad, h: 0.4,
+        fontSize: PX2PT(cv.dateSize), fontFace: 'Inter',
+        color: '1A1A1A', align: cv.align,
+        charSpacing: cv.letterSpacing
+      });
+    }
+  }
+  else if (slide.layout === 'section'){
+    const sec = state.section;
+    s.addText(slide.sectionNumber || '01', {
+      x: leftPad, y: 1.8, w: leftW - 2*leftPad, h: 3,
+      fontSize: PX2PT(sec.numberSize), fontFace: 'Oswald', bold: true,
+      color: 'D4AF37', align: sec.align, valign: 'top',
+      charSpacing: sec.letterSpacing
+    });
+    s.addText(slide.title || '', {
+      x: rightX + rightPad, y: 3, w: rightW - 2*rightPad, h: 2,
+      fontSize: PX2PT(sec.titleSize), fontFace: 'Oswald', bold: true,
+      color: 'C22620', align: sec.align, valign: 'top',
+      charSpacing: sec.letterSpacing
+    });
+  }
+  else if (slide.layout === 'content1' || slide.layout === 'contentImage'){
+    s.addText(slide.title || '', {
+      x: leftPad, y: 1.2, w: leftW - 2*leftPad, h: 5,
+      fontSize: PX2PT(t.h1Size), fontFace: 'Oswald', bold: true,
+      color: 'D4AF37', align: t.align, valign: 'top',
+      charSpacing: t.h1LetterSpacing
+    });
+    let y = 0.8;
+    if (slide.layout === 'contentImage'){
+      const first = (slide.images || [])[0];
+      if (first){
+        const ih = 2.5;
+        s.addImage({ data: first.src, x: rightX + rightPad, y, w: rightW - 2*rightPad, h: ih, sizing: { type: 'cover', w: rightW - 2*rightPad, h: ih } });
+        y += ih + 0.2;
+      }
+    }
+    const items = (slide.body || '').split('\n').filter(l => l.trim());
+    const txt = items.map(l => ({ text: l, options: { bullet: { code: '25CF' }, color: '1A1A1A' } }));
+    if (txt.length){
+      s.addText(txt, {
+        x: rightX + rightPad, y, w: rightW - 2*rightPad, h: SH - y - FOOTER_H - 0.3,
+        fontSize: PX2PT(t.bodySize), fontFace: 'Inter', color: '1A1A1A',
+        align: t.align, valign: 'top',
+        paraSpaceAfter: Math.max(t.elementGap/2, 4),
+        charSpacing: t.bodyLetterSpacing
+      });
+    }
+  }
+  else if (slide.layout === 'content2'){
+    s.addText(slide.title || '', {
+      x: leftPad, y: 1.2, w: leftW - 2*leftPad, h: 5,
+      fontSize: PX2PT(t.h1Size), fontFace: 'Oswald', bold: true,
+      color: 'D4AF37', align: t.align, valign: 'top',
+      charSpacing: t.h1LetterSpacing
+    });
+    let y = 0.8;
+    const gapW = PX2IN(t.elementGap + 10);
+    const colW = (rightW - 2*rightPad - gapW) / 2;
+    [[slide.col1Title, slide.col1Body, rightX + rightPad],
+     [slide.col2Title, slide.col2Body, rightX + rightPad + colW + gapW]].forEach(([ct, cb, x]) => {
+      s.addText(ct || '', {
+        x, y, w: colW, h: 0.55,
+        fontSize: PX2PT(t.h2Size), fontFace: 'Oswald', bold: true,
+        color: 'C22620', align: t.align, valign: 'top',
+        charSpacing: t.h1LetterSpacing
+      });
+      const items = (cb || '').split('\n').filter(l => l.trim());
+      const txt = items.map(l => ({ text: l, options: { bullet: { code: '25CF' }, color: '1A1A1A' } }));
+      if (txt.length){
+        s.addText(txt, {
+          x, y: y + 0.55, w: colW, h: SH - y - 1 - FOOTER_H,
+          fontSize: PX2PT(t.bodySize), fontFace: 'Inter', color: '1A1A1A',
+          align: t.align, valign: 'top',
+          paraSpaceAfter: Math.max(t.elementGap/2, 4),
+          charSpacing: t.bodyLetterSpacing
+        });
+      }
+    });
+  }
+  else if (slide.layout === 'thankyou'){
+    const cv = state.cover;
+    s.addText(state.general.programName || '', {
+      x: leftPad, y: 2, w: leftW - 2*leftPad, h: 1,
+      fontSize: PX2PT(cv.programSize), fontFace: 'Oswald', bold: true,
+      color: 'D4AF37', align: cv.align, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    const sps = (state.general.speakers || []).filter(Boolean);
+    if (sps.length){
+      s.addText(sps.map((n, i) => ({ text: n, options: { breakLine: i < sps.length - 1, bold: true } })), {
+        x: leftPad, y: 3.2, w: leftW - 2*leftPad, h: 3,
+        fontSize: PX2PT(cv.speakerSize), fontFace: 'Inter',
+        color: 'FFFFFF', align: cv.align, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+    }
+    s.addText(slide.title || 'Cảm ơn', {
+      x: rightX + rightPad, y: 2.2, w: rightW - 2*rightPad, h: 2.5,
+      fontSize: PX2PT(cv.topicSize), fontFace: 'Oswald', bold: true,
+      color: 'C22620', align: cv.align, valign: 'top',
+      charSpacing: cv.letterSpacing
+    });
+    const bodyLines = (slide.body || '').split('\n').filter(l => l.trim());
+    const subLine = bodyLines[0] || '';
+    const contactLines = bodyLines.slice(1);
+    let tyY = 4.8;
+    if (subLine){
+      s.addText(subLine, {
+        x: rightX + rightPad, y: tyY, w: rightW - 2*rightPad, h: 0.7,
+        fontSize: PX2PT(cv.programSize), fontFace: 'Inter',
+        color: '1A1A1A', align: cv.align, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+      tyY += PX2IN(cv.programSize) * 1.5 + 0.1;
+    }
+    if (contactLines.length){
+      s.addText(contactLines.map((l, i) => ({ text: l, options: { breakLine: i < contactLines.length - 1 } })), {
+        x: rightX + rightPad, y: tyY, w: rightW - 2*rightPad, h: 1.2,
+        fontSize: PX2PT(cv.dateSize), fontFace: 'Inter',
+        color: '1A1A1A', align: cv.align, valign: 'top',
+        charSpacing: cv.letterSpacing
+      });
+    }
+  }
+
+  const extraStart = slide.layout === 'contentImage' ? 1 : 0;
+  (slide.images || []).slice(extraStart).forEach(im => {
+    const iw = 2.2 * (im.zoom || 1);
+    const ih = 1.5 * (im.zoom || 1);
+    const cx = SW * (im.posX ?? 60) / 100;
+    const cy = (SH - FOOTER_H) * (im.posY ?? 60) / 100;
+    s.addImage({ data: im.src, x: cx - iw/2, y: cy - ih/2, w: iw, h: ih });
+  });
+}
+
+function addFooterLogoPPTX(s, slide){
+  const SW = 13.33, SH = 7.5, FOOTER_H = 0.3;
+  // Logo
+  if (state.logo.src){
+    const lh = PX2IN(48 * state.logo.size);
+    let lw = lh * 2.2;
+    if (state.logo._natW && state.logo._natH) lw = lh * (state.logo._natW / state.logo._natH);
+    let lx;
+    if (state.logo.position === 'left') lx = PX2IN(30);
+    else if (state.logo.position === 'right') lx = SW - lw - PX2IN(30);
+    else lx = (SW - lw) / 2;
+    s.addImage({ data: state.logo.src, x: lx, y: 0.3, w: lw, h: lh, sizing: { type: 'contain', w: lw, h: lh } });
+  }
+  // Footer separator line (1px ≈ 0.014 inch at 72dpi)
+  const footerLineColor = (state.template === 'minimal' || state.template === 'corporate') ? 'C22620' : 'D4AF37';
+  s.addShape('rect', { x: 0, y: SH - FOOTER_H - 0.014, w: SW, h: 0.014, fill: { color: footerLineColor }, line: { color: footerLineColor } });
+  // Footer (0.3 inch)
+  s.addShape('rect', { x: 0, y: SH - FOOTER_H, w: SW, h: FOOTER_H, fill: { color: 'C22620' }, line: { color: 'C22620' } });
+  s.addText(state.general.topicName || '', {
+    x: 0.25, y: SH - FOOTER_H, w: 7, h: FOOTER_H,
+    fontSize: 9, fontFace: 'Inter', color: 'FFFFFF', align: 'left', valign: 'middle', bold: true
+  });
+  s.addText('TƯ DUY QUẢN TRỊ GỐC — XLeader Academy', {
+    x: SW - 6.2, y: SH - FOOTER_H, w: 6, h: FOOTER_H,
+    fontSize: 9, fontFace: 'Inter', color: 'FFFFFF', align: 'right', valign: 'middle'
+  });
+}
+
+/* ================= PRESET ================= */
+function savePreset(){
+  try {
+    localStorage.setItem('xleader_preset_v2', JSON.stringify(state));
+    toast('Đã lưu preset');
+  } catch(e){ toast('Không lưu được (dữ liệu lớn?)'); }
+}
+function loadPreset(){
+  const raw = localStorage.getItem('xleader_preset_v2');
+  if (!raw){ toast('Không có preset đã lưu'); return; }
+  try {
+    state = JSON.parse(raw);
+    migrateState();
+    snapshot();
+    syncFormFromState();
+    renderAll();
+    toast('Đã load preset');
+  } catch(e){ toast('Preset lỗi'); }
+}
+function resetAll(){
+  if (!confirm('Reset về mặc định?')) return;
+  state = DEFAULT_STATE();
+  snapshot(); syncFormFromState(); renderAll();
+  toast('Đã reset');
+}
+
+/* ================= BIND ================= */
+function bindForm(){
+  $$('.accordion-header').forEach(h => h.onclick = () => h.parentElement.classList.toggle('open'));
+
+  $('#f-program').oninput = () => { state.general.programName = $('#f-program').value; renderPreviewAndThumbs(); };
+  $('#f-program').onchange = () => snapshot();
+  $('#f-topic').oninput = () => { state.general.topicName = $('#f-topic').value; renderPreviewAndThumbs(); };
+  $('#f-topic').onchange = () => snapshot();
+  $('#f-date-from').onchange = () => { state.general.dateFrom = $('#f-date-from').value; snapshot(); renderPreviewAndThumbs(); };
+  $('#f-date-to').onchange = () => { state.general.dateTo = $('#f-date-to').value; snapshot(); renderPreviewAndThumbs(); };
+
+  // Cover typography bindings
+  const cvBind = [
+    ['#s-cv-prog', 'programSize', '#v-cv-prog'],
+    ['#s-cv-topic', 'topicSize', '#v-cv-topic'],
+    ['#s-cv-speaker', 'speakerSize', '#v-cv-speaker'],
+    ['#s-cv-date', 'dateSize', '#v-cv-date'],
+    ['#s-cv-ls', 'letterSpacing', '#v-cv-ls']
+  ];
+  cvBind.forEach(([sel, key, vsel]) => {
+    const inp = $(sel);
+    inp.oninput = () => {
+      const v = Number(inp.value);
+      state.cover[key] = v;
+      $(vsel).textContent = v + 'px';
+      renderPreviewAndThumbs();
+    };
+    inp.onchange = () => snapshot();
+  });
+  $('#s-cv-align').onchange = () => { state.cover.align = $('#s-cv-align').value; snapshot(); renderPreviewAndThumbs(); };
+
+  // Section Divider typography bindings
+  const secBind = [
+    ['#s-sec-num', 'numberSize', '#v-sec-num'],
+    ['#s-sec-title', 'titleSize', '#v-sec-title'],
+    ['#s-sec-ls', 'letterSpacing', '#v-sec-ls']
+  ];
+  secBind.forEach(([sel, key, vsel]) => {
+    const inp = $(sel);
+    inp.oninput = () => {
+      const v = Number(inp.value);
+      state.section[key] = v;
+      $(vsel).textContent = v + 'px';
+      renderPreviewAndThumbs();
+    };
+    inp.onchange = () => snapshot();
+  });
+  $('#s-sec-align').onchange = () => { state.section.align = $('#s-sec-align').value; snapshot(); renderPreviewAndThumbs(); };
+
+  // Reset buttons per group
+  $('#btn-reset-ct').onclick = () => { state.cover = COVER_DEFAULTS(); snapshot(); syncFormFromState(); renderAll(); toast('Đã reset Cover + Thank You'); };
+  $('#btn-reset-section').onclick = () => { state.section = SECTION_DEFAULTS(); snapshot(); syncFormFromState(); renderAll(); toast('Đã reset Section'); };
+  $('#btn-reset-content').onclick = () => { state.typography = TYPO_DEFAULTS(); snapshot(); syncFormFromState(); renderAll(); toast('Đã reset thân bài'); };
+
+  $$('.template-card').forEach(c => c.onclick = () => {
+    state.template = c.dataset.tpl;
+    snapshot(); renderAll();
+  });
+
+  $('#btn-add-speaker').onclick = () => {
+    if ((state.general.speakers || []).length >= 6){ toast('Tối đa 6 diễn giả'); return; }
+    state.general.speakers.push('');
+    snapshot(); renderAll();
+  };
+
+  $('#btn-add-slide').onclick = () => {
+    state.slides.push({ layout: 'content1', title: 'Slide mới', body: 'Nội dung\nNội dung', images: [] });
+    state.currentIndex = state.slides.length - 1;
+    snapshot(); renderAll();
+  };
+  $('#btn-preview').onclick = () => { renderAll(); toast('Đã render lại'); };
+
+  $('#f-add-image').onchange = async () => {
+    const files = Array.from($('#f-add-image').files || []);
+    if (!files.length) return;
+    const s = state.slides[state.currentIndex];
+    if (!s.images) s.images = [];
+    for (const f of files){
+      const data = await fileToDataURL(f);
+      s.images.push({ src: data, zoom: 1, posX: 50, posY: 50, objectFit: 'cover' });
+    }
+    $('#f-add-image').value = '';
+    snapshot(); renderAll();
+  };
+
+  const tyBind = [
+    ['#s-h1', 'h1Size', '#v-h1', v => v + 'px'],
+    ['#s-h2', 'h2Size', '#v-h2', v => v + 'px'],
+    ['#s-body', 'bodySize', '#v-body', v => v + 'px'],
+    ['#s-ls1', 'h1LetterSpacing', '#v-ls1', v => v + 'px'],
+    ['#s-lsb', 'bodyLetterSpacing', '#v-lsb', v => v + 'px'],
+    ['#s-lh', 'lineHeight', '#v-lh', v => fmt(v, 2)],
+    ['#s-ws', 'wordSpacing', '#v-ws', v => v + 'px'],
+    ['#s-pad', 'padding', '#v-pad', v => v + 'px'],
+    ['#s-gap', 'elementGap', '#v-gap', v => v + 'px']
+  ];
+  tyBind.forEach(([sel, key, vsel, fmtFn]) => {
+    const inp = $(sel);
+    inp.oninput = () => {
+      const v = Number(inp.value);
+      state.typography[key] = v;
+      $(vsel).textContent = fmtFn(v);
+      renderPreviewAndThumbs();
+    };
+    inp.onchange = () => snapshot();
+  });
+  $('#s-align').onchange = () => { state.typography.align = $('#s-align').value; snapshot(); renderPreviewAndThumbs(); };
+  $('#s-color').onchange = () => { state.typography.textColor = $('#s-color').value; snapshot(); renderPreviewAndThumbs(); };
+
+  $('#f-logo').onchange = async () => {
+    const f = $('#f-logo').files[0];
+    if (!f) return;
+    toast('Đang crop logo...', 1200);
+    const raw = await fileToDataURL(f);
+    const cropped = await autoCropImage(raw);
+    state.logo.src = cropped;
+    // Pre-load to measure
+    const im = new Image();
+    im.onload = () => {
+      state.logo._natW = im.naturalWidth;
+      state.logo._natH = im.naturalHeight;
+      snapshot(); renderAll();
+    };
+    im.src = cropped;
+  };
+  $('#logo-position').onchange = () => { state.logo.position = $('#logo-position').value; snapshot(); renderPreviewAndThumbs(); };
+  $('#logo-size').oninput = () => {
+    const v = Number($('#logo-size').value);
+    state.logo.size = v;
+    $('#v-logo-size').textContent = fmt(v*100,0)+'%';
+    renderPreviewAndThumbs();
+  };
+  $('#logo-size').onchange = () => snapshot();
+
+  $('#nav-prev').onclick = () => { if (state.currentIndex>0){ state.currentIndex--; renderPreview(); renderThumbnails(); renderImagesList(); updateCurrentSlideLabel(); } };
+  $('#nav-next').onclick = () => { if (state.currentIndex<state.slides.length-1){ state.currentIndex++; renderPreview(); renderThumbnails(); renderImagesList(); updateCurrentSlideLabel(); } };
+
+  $('#btnUndo').onclick = undo;
+  $('#btnRedo').onclick = redo;
+  $('#btnSavePreset').onclick = savePreset;
+  $('#btnLoadPreset').onclick = loadPreset;
+  $('#btnReset').onclick = resetAll;
+  $('#btnExport').onclick = exportPPTX;
+
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
+    else if (mod && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))){ e.preventDefault(); redo(); }
+    else if (mod && e.key.toLowerCase() === 's'){ e.preventDefault(); exportPPTX(); }
+  });
+
+  window.addEventListener('resize', () => { scalePreview(); renderThumbnails(); });
+}
+
+/* ================= BOOT ================= */
+async function boot(){
+  try { await document.fonts.ready; } catch(e){}
+  migrateState();
+  bindForm();
+  syncFormFromState();
+  snapshot();
+  renderAll();
+}
+boot();
+
+})();
+</script>
+</body>
+</html>
